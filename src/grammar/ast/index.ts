@@ -1,3 +1,6 @@
+/**
+ * Tipos de datos globales
+ */
 enum DATATYPE {
 	INT,
 	DECIMAL,

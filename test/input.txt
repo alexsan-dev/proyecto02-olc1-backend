@@ -16,3 +16,30 @@ String myStr = new String();
 append(myList, 3);
 getValue(myList, 0);
 setValue(myList, 0, 34);
+
+if((1 + 2)*2 == 6) {
+    append(myList, 5);
+}
+
+int edad = 18;
+
+
+/* Salida esperada
+Tengo 18 anios.
+No se que edad tengo. :(
+*/
+
+int edad = 18;
+switch( edad ) {
+    case 10:
+        append(myList,"Tengo 10 anios.");
+        break;
+    case 18:
+        append(myList, "Tengo 18 anios");
+    case 25:
+        append(myList, "Tengo 25 anios");
+        break;
+    default:
+        append(myList, "No se que edad tengo");
+        break;
+}
