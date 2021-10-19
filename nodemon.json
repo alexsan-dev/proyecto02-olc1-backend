@@ -1,0 +1,11 @@
+{
+	"watch": ["src", "test"],
+	"ext": "ts,jison,txt",
+	"ignore": ["*.test.ts"],
+	"execMap": {
+		"ts": "ts-node"
+	},
+	"events": {
+		"restart": "./build.sh"
+	}
+}

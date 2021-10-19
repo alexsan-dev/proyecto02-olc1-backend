@@ -1,0 +1,18 @@
+// Comentario
+/* Comentario
+multi linea
+*/
+
+int vector[] = new int[3];
+double vector2[] = { 2.2, 5.3, 6.8, vector[1] };
+String alex = (String) !((("texto" * 2 + vector2[1]) + -(vector[0] + 2)/3) + "hola");
+double dbl = 2.3;
+vector[2] = 5;
+dbl++;
+dbl--;
+
+DynamicList<int> myList = new DynamicList<int>;
+String myStr = new String();
+append(myList, 3);
+getValue(myList, 0);
+setValue(myList, 0, 34);
