@@ -67,6 +67,17 @@
 "append"                    return 'appendRw'
 "getValue"                  return 'getValueRw'
 "setValue"                  return 'setValueRw'
+'writeLine'                 return 'writeLineRw'
+'toLower'                   return 'toLowerRw'
+'toUpper'                   return 'toUpperRw'
+'length'                    return 'lengthRw'
+'truncate'                  return 'truncateRw'
+'round'                     return 'roundRw'
+'typeOf'                    return 'typeOfRw'
+'toString'                  return 'toStringRw'
+'toCharArray'               return 'toCharArrayRw'
+'start'                     return 'startRw'
+'with'                      return 'withRw'
 
 'if'                        return 'ifRw'
 'else'                      return 'elseRw'
@@ -157,9 +168,6 @@ TYPE :
     }
     | dynamicList minor TYPE major {
         $$ = DATATYPE.DYNAMICLIST
-    }
-    | voidType {
-        $$ = DATATYPE.VOID
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -167,12 +175,15 @@ TYPE :
 BLOCKCONTENT : openBracket INSTRUCTIONS closeBracket;
 
 INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
+| INSTRUCTIONS MAIN
 | INSTRUCTION;
 
 INSTRUCTION : DECLARATION semicolom | LINEASSIGNMENT semicolom 
 | INCREMENTEXP semicolom | METHODS semicolom | breakRw semicolom
-| continueRw semicolom | returnRw semicolom
+| continueRw semicolom | returnRw semicolom | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
+
+MAIN : startRw withRw FUNCTIONHEADER semicolom;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* DECLARACION DE VARIABLES */
@@ -196,11 +207,7 @@ equals newRw TYPE openSquareBracket integer closeSquareBracket
 equals openBracket EXPLIST closeBracket;
 
 CLASSINSTANCE : id equals newRw TYPE
-| id equals newRw id
-| id equals newRw TYPE openParenthesis closeParenthesis
-| id equals newRw id openParenthesis closeParenthesis
-| id equals newRw TYPE openParenthesis EXPLIST closeParenthesis
-| id equals newRw id openParenthesis EXPLIST closeParenthesis;
+| id equals newRw id;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* TODAS LAS EXPRESIONES VALIDAS */
@@ -211,6 +218,7 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS
 | EXPRESSIONS notEquals EXPRESSIONS
 | EXPRESSIONS divition EXPRESSIONS
 | EXPRESSIONS module EXPRESSIONS
+| EXPRESSIONS power EXPRESSIONS
 | EXPRESSIONS times EXPRESSIONS
 | EXPRESSIONS minus EXPRESSIONS
 | EXPRESSIONS minor EXPRESSIONS
@@ -241,7 +249,9 @@ VECTORVALUE : id openSquareBracket integer closeSquareBracket;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | GETVALUE | SETVALUE | FUNCTIONHEADER | FUNCTION;
+METHODS : APPEND | GETVALUE | SETVALUE | FUNCTIONHEADER 
+| WRITELINE | TOLOWER | TOUPPER | LENGTHSEQ
+| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY;
 
 APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 
@@ -249,6 +259,24 @@ GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 
 SETVALUE : setValueRw openParenthesis 
 id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis;
+
+WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis;
+
+TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;
+
+TOUPPER : toUpperRw openParenthesis EXPRESSIONS closeParenthesis;
+
+LENGTHSEQ : lengthRw openParenthesis VARVALUE closeParenthesis;
+
+TRUNCATE : truncateRw openParenthesis VARVALUE closeParenthesis;
+
+ROUND : roundRw openParenthesis VARVALUE closeParenthesis;
+
+TYPEOFSEQ : typeOfRw openParenthesis VARVALUE closeParenthesis;
+
+TOSTRINGSEQ : toStringRw openParenthesis VARVALUE closeParenthesis;
+
+TOCHARARRAY : toCharArrayRw openParenthesis VARVALUE closeParenthesis;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* SENTENCIAS DE CONTROL */
@@ -287,7 +315,16 @@ FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* METODOS */
+PARAMSLIST : PARAMSLIST comma PARAMVAR
+| PARAMVAR;
+
+PARAMVAR : TYPE id;
+
+FUNCTIONPARAMS : openParenthesis PARAMSLIST closeParenthesis
+| openParenthesis closeParenthesis; 
+
 FUNCTIONHEADER : id openParenthesis EXPLIST closeParenthesis 
 | id openParenthesis closeParenthesis;
 
-FUNCTION : TYPE FUNCTIONHEADER BLOCKCONTENT;
+FUNCTION : TYPE id FUNCTIONPARAMS BLOCKCONTENT 
+| voidType id FUNCTIONPARAMS BLOCKCONTENT;
