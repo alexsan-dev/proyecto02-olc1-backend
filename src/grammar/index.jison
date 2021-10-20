@@ -180,7 +180,7 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
 
 INSTRUCTION : DECLARATION semicolom | LINEASSIGNMENT semicolom 
 | INCREMENTEXP semicolom | METHODS semicolom | breakRw semicolom
-| continueRw semicolom | returnRw semicolom | FUNCTION
+| continueRw semicolom | returnRw EXPRESSIONS semicolom | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
 MAIN : startRw withRw FUNCTIONHEADER semicolom;
@@ -225,12 +225,10 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS
 | EXPRESSIONS major EXPRESSIONS
 | EXPRESSIONS and EXPRESSIONS
 | EXPRESSIONS or EXPRESSIONS
-| not EXPRESSIONS
-| minus EXPRESSIONS
+| not EXPRESSIONS | minus EXPRESSIONS
 | openParenthesis EXPRESSIONS closeParenthesis
 | openParenthesis TYPE closeParenthesis EXPRESSIONS
 | openParenthesis TERNARY closeParenthesis
-| FUNCTIONHEADER
 | VARVALUE;
 
 TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS;
@@ -243,15 +241,15 @@ EXPLIST : EXPLIST comma EXPRESSIONS
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
 VARVALUE : decimal | text | id | integer | character | trBool 
-| flBool | VECTORVALUE;
+| flBool | FUNCTIONHEADER | TOLOWER | TOUPPER | LENGTHSEQ
+| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
+| GETVALUE | VECTORVALUE;
 
 VECTORVALUE : id openSquareBracket integer closeSquareBracket;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | GETVALUE | SETVALUE | FUNCTIONHEADER 
-| WRITELINE | TOLOWER | TOUPPER | LENGTHSEQ
-| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY;
+METHODS : APPEND | SETVALUE | FUNCTIONHEADER | WRITELINE;
 
 APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 
