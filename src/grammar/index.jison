@@ -13,6 +13,7 @@
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* TIPOS DE DATOS */
 "char"                      return 'charType'
+"void"                      return 'voidType'
 "boolean"                   return 'boolType'
 "string"                    return 'strType'
 "double"                    return 'dblType'
@@ -156,6 +157,9 @@ TYPE :
     }
     | dynamicList minor TYPE major {
         $$ = DATATYPE.DYNAMICLIST
+    }
+    | voidType {
+        $$ = DATATYPE.VOID
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -189,14 +193,14 @@ ASSIGNMENT : id
 VECTORASSIGNMENT : id openSquareBracket closeSquareBracket 
 equals newRw TYPE openSquareBracket integer closeSquareBracket
 | id openSquareBracket closeSquareBracket
-equals openBracket VALUELIST closeBracket;
+equals openBracket EXPLIST closeBracket;
 
 CLASSINSTANCE : id equals newRw TYPE
 | id equals newRw id
 | id equals newRw TYPE openParenthesis closeParenthesis
 | id equals newRw id openParenthesis closeParenthesis
-| id equals newRw TYPE openParenthesis VALUELIST closeParenthesis
-| id equals newRw id openParenthesis VALUELIST closeParenthesis;
+| id equals newRw TYPE openParenthesis EXPLIST closeParenthesis
+| id equals newRw id openParenthesis EXPLIST closeParenthesis;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* TODAS LAS EXPRESIONES VALIDAS */
@@ -218,11 +222,15 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS
 | openParenthesis EXPRESSIONS closeParenthesis
 | openParenthesis TYPE closeParenthesis EXPRESSIONS
 | openParenthesis TERNARY closeParenthesis
+| FUNCTIONHEADER
 | VARVALUE;
 
 TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS;
 
 INCREMENTEXP : id plusPlus | id minusMinus;
+
+EXPLIST : EXPLIST comma EXPRESSIONS
+| EXPRESSIONS;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
@@ -231,12 +239,9 @@ VARVALUE : decimal | text | id | integer | character | trBool
 
 VECTORVALUE : id openSquareBracket integer closeSquareBracket;
 
-VALUELIST : VALUELIST comma VARVALUE
-| VARVALUE;
-
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | GETVALUE | SETVALUE;
+METHODS : APPEND | GETVALUE | SETVALUE | FUNCTIONHEADER | FUNCTION;
 
 APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 
@@ -261,7 +266,7 @@ openBracket SWITCHSEQCASES closeBracket;
 SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT
 | SWITCHSEQCONTENT;
 
-SWITCHSEQCONTENT : caseRw VARVALUE colom INSTRUCTIONS
+SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS
 | defaultRw colom INSTRUCTIONS;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -279,3 +284,10 @@ FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
 | DECLARATION semicolom EXPRESSIONS semicolom INCREMENTEXP
 | LINEASSIGNMENT semicolom EXPRESSIONS semicolom EXPRESSIONS
 | LINEASSIGNMENT semicolom EXPRESSIONS semicolom INCREMENTEXP;
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* METODOS */
+FUNCTIONHEADER : id openParenthesis EXPLIST closeParenthesis 
+| id openParenthesis closeParenthesis;
+
+FUNCTION : TYPE FUNCTIONHEADER BLOCKCONTENT;
