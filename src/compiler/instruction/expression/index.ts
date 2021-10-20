@@ -1,5 +1,6 @@
 // IMPORTS
-import ExpValue from './value'
+import Expression from './data'
+import Value from './value'
 
 // EXPORTS
-export { ExpValue }
+export { Expression, Value }

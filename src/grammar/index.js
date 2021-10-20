@@ -75,8 +75,8 @@ var index = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,27],$V1=[1,28],$V2=[1,29],$V3=[1,30],$V4=[1,31],$V5=[1,32],$V6=[1,7],$V7=[1,8],$V8=[1,9],$V9=[1,15],$Va=[1,33],$Vb=[1,34],$Vc=[1,35],$Vd=[1,22],$Ve=[1,36],$Vf=[1,23],$Vg=[1,37],$Vh=[1,38],$Vi=[1,39],$Vj=[1,20],$Vk=[1,43],$Vl=[5,7,8,9,10,11,12,17,24,25,26,32,38,86,88,89,99,100,101,104,105,109,110,111,117],$Vm=[1,56],$Vn=[1,57],$Vo=[1,54],$Vp=[1,55],$Vq=[1,58],$Vr=[1,59],$Vs=[1,60],$Vt=[1,51],$Vu=[1,50],$Vv=[1,52],$Vw=[1,80],$Vx=[1,72],$Vy=[1,73],$Vz=[1,74],$VA=[1,78],$VB=[1,79],$VC=[1,75],$VD=[1,76],$VE=[1,77],$VF=[1,89],$VG=[1,87],$VH=[1,88],$VI=[1,94],$VJ=[14,38,44,78],$VK=[1,115],$VL=[1,116],$VM=[1,105],$VN=[1,106],$VO=[1,107],$VP=[1,108],$VQ=[1,109],$VR=[1,110],$VS=[1,111],$VT=[1,112],$VU=[1,113],$VV=[1,114],$VW=[1,117],$VX=[1,118],$VY=[13,14,17,21,36,64,65,66,67,68,69,70,71,72,73,74,75,78,79,80],$VZ=[2,37],$V_=[1,124],$V$=[21,36],$V01=[2,26],$V11=[1,136],$V21=[1,137],$V31=[1,138],$V41=[21,78],$V51=[13,14,17,21,36,64,65,66,67,68,69,70,71,72,73,78,79,80],$V61=[17,21,36,64,69,71,72,73,78,79,80],$V71=[1,174],$V81=[1,177],$V91=[1,188],$Va1=[1,200],$Vb1=[17,36,78],$Vc1=[17,21,36,69,71,72,78,79,80],$Vd1=[36,78],$Ve1=[1,250],$Vf1=[1,251],$Vg1=[17,104,105],$Vh1=[1,270];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"dblType":8,"boolType":9,"charType":10,"strType":11,"dynamicListRw":12,"minor":13,"major":14,"BLOCKCONTENT":15,"openBracket":16,"closeBracket":17,"INSTRUCTION":18,"MAIN":19,"DECLARATION":20,"semicolom":21,"INCREMENTEXP":22,"METHODS":23,"breakRw":24,"continueRw":25,"returnRw":26,"EXPRESSIONS":27,"FUNCTION":28,"CONTROLSEQ":29,"SWITCHSEQ":30,"LOOPSEQ":31,"startRw":32,"withRw":33,"FUNCTIONHEADER":34,"ASSIGNMENTS":35,"comma":36,"ASSIGNMENT":37,"id":38,"equals":39,"TERNARY":40,"VECTORASSIGNMENT":41,"DYNAMICLIST":42,"VECTORVALUE":43,"openSquareBracket":44,"closeSquareBracket":45,"newRw":46,"integer":47,"EXPLIST":48,"VARVALUE":49,"decimal":50,"text":51,"character":52,"trBool":53,"flBool":54,"TOLOWER":55,"TOUPPER":56,"LENGTHSEQ":57,"TYPEOFSEQ":58,"TOSTRINGSEQ":59,"TOCHARARRAY":60,"TRUNCATE":61,"ROUND":62,"GETVALUE":63,"plus":64,"equalsEquals":65,"moreOrEquals":66,"lessOrEquals":67,"notEquals":68,"divition":69,"module":70,"power":71,"times":72,"minus":73,"and":74,"or":75,"not":76,"openParenthesis":77,"closeParenthesis":78,"questionMark":79,"colom":80,"plusPlus":81,"minusMinus":82,"APPEND":83,"SETVALUE":84,"WRITELINE":85,"appendRw":86,"getValueRw":87,"setValueRw":88,"writeLineRw":89,"toLowerRw":90,"toUpperRw":91,"lengthRw":92,"truncateRw":93,"roundRw":94,"typeOfRw":95,"toStringRw":96,"toCharArrayRw":97,"CONSTROLSEQSYM":98,"elseRw":99,"ifRw":100,"switchRw":101,"SWITCHSEQCASES":102,"SWITCHSEQCONTENT":103,"caseRw":104,"defaultRw":105,"WHILESEQ":106,"DOWHILESEQ":107,"FORSEQ":108,"whileRw":109,"doRw":110,"forRw":111,"FORSEQPARAMS":112,"LINEASSIGNMENT":113,"PARAMSLIST":114,"PARAMVAR":115,"FUNCTIONPARAMS":116,"voidType":117,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"intType",8:"dblType",9:"boolType",10:"charType",11:"strType",12:"dynamicListRw",13:"minor",14:"major",16:"openBracket",17:"closeBracket",21:"semicolom",24:"breakRw",25:"continueRw",26:"returnRw",32:"startRw",33:"withRw",36:"comma",38:"id",39:"equals",44:"openSquareBracket",45:"closeSquareBracket",46:"newRw",47:"integer",50:"decimal",51:"text",52:"character",53:"trBool",54:"flBool",64:"plus",65:"equalsEquals",66:"moreOrEquals",67:"lessOrEquals",68:"notEquals",69:"divition",70:"module",71:"power",72:"times",73:"minus",74:"and",75:"or",76:"not",77:"openParenthesis",78:"closeParenthesis",79:"questionMark",80:"colom",81:"plusPlus",82:"minusMinus",86:"appendRw",87:"getValueRw",88:"setValueRw",89:"writeLineRw",90:"toLowerRw",91:"toUpperRw",92:"lengthRw",93:"truncateRw",94:"roundRw",95:"typeOfRw",96:"toStringRw",97:"toCharArrayRw",99:"elseRw",100:"ifRw",101:"switchRw",104:"caseRw",105:"defaultRw",109:"whileRw",110:"doRw",111:"forRw",113:"LINEASSIGNMENT",117:"voidType"},
+symbols_: {"error":2,"START":3,"INSTRUCTIONS":4,"EOF":5,"TYPE":6,"intType":7,"dblType":8,"boolType":9,"charType":10,"strType":11,"dynamicListRw":12,"minor":13,"major":14,"BLOCKCONTENT":15,"openBracket":16,"closeBracket":17,"INSTRUCTION":18,"MAIN":19,"DECLARATION":20,"semicolom":21,"INCREMENTEXP":22,"METHODS":23,"breakRw":24,"continueRw":25,"returnRw":26,"EXPRESSIONS":27,"FUNCTION":28,"CONTROLSEQ":29,"SWITCHSEQ":30,"LOOPSEQ":31,"startRw":32,"withRw":33,"FUNCTIONHEADER":34,"ASSIGNMENTS":35,"comma":36,"ASSIGNMENT":37,"id":38,"equals":39,"TERNARY":40,"VECTORASSIGNMENT":41,"DYNAMICLIST":42,"VECTORVALUE":43,"openSquareBracket":44,"closeSquareBracket":45,"newRw":46,"integer":47,"EXPLIST":48,"VARVALUE":49,"decimal":50,"text":51,"character":52,"trBool":53,"flBool":54,"TOLOWER":55,"TOUPPER":56,"LENGTHSEQ":57,"TYPEOFSEQ":58,"TOSTRINGSEQ":59,"TOCHARARRAY":60,"TRUNCATE":61,"ROUND":62,"GETVALUE":63,"plus":64,"equalsEquals":65,"moreOrEquals":66,"lessOrEquals":67,"nonEquals":68,"division":69,"module":70,"power":71,"times":72,"minus":73,"and":74,"or":75,"not":76,"openParenthesis":77,"closeParenthesis":78,"questionMark":79,"colom":80,"plusPlus":81,"minusMinus":82,"APPEND":83,"SETVALUE":84,"WRITELINE":85,"appendRw":86,"getValueRw":87,"setValueRw":88,"writeLineRw":89,"toLowerRw":90,"toUpperRw":91,"lengthRw":92,"truncateRw":93,"roundRw":94,"typeOfRw":95,"toStringRw":96,"toCharArrayRw":97,"CONSTROLSEQSYM":98,"elseRw":99,"ifRw":100,"switchRw":101,"SWITCHSEQCASES":102,"SWITCHSEQCONTENT":103,"caseRw":104,"defaultRw":105,"WHILESEQ":106,"DOWHILESEQ":107,"FORSEQ":108,"whileRw":109,"doRw":110,"forRw":111,"FORSEQPARAMS":112,"LINEASSIGNMENT":113,"PARAMSLIST":114,"PARAMVAR":115,"FUNCTIONPARAMS":116,"voidType":117,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"intType",8:"dblType",9:"boolType",10:"charType",11:"strType",12:"dynamicListRw",13:"minor",14:"major",16:"openBracket",17:"closeBracket",21:"semicolom",24:"breakRw",25:"continueRw",26:"returnRw",32:"startRw",33:"withRw",36:"comma",38:"id",39:"equals",44:"openSquareBracket",45:"closeSquareBracket",46:"newRw",47:"integer",50:"decimal",51:"text",52:"character",53:"trBool",54:"flBool",64:"plus",65:"equalsEquals",66:"moreOrEquals",67:"lessOrEquals",68:"nonEquals",69:"division",70:"module",71:"power",72:"times",73:"minus",74:"and",75:"or",76:"not",77:"openParenthesis",78:"closeParenthesis",79:"questionMark",80:"colom",81:"plusPlus",82:"minusMinus",86:"appendRw",87:"getValueRw",88:"setValueRw",89:"writeLineRw",90:"toLowerRw",91:"toUpperRw",92:"lengthRw",93:"truncateRw",94:"roundRw",95:"typeOfRw",96:"toStringRw",97:"toCharArrayRw",99:"elseRw",100:"ifRw",101:"switchRw",104:"caseRw",105:"defaultRw",109:"whileRw",110:"doRw",111:"forRw",113:"LINEASSIGNMENT",117:"voidType"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[6,1],[6,1],[6,4],[15,3],[4,2],[4,2],[4,1],[18,2],[18,2],[18,2],[18,2],[18,2],[18,3],[18,1],[18,1],[18,1],[18,1],[19,4],[20,2],[35,3],[35,1],[37,1],[37,3],[37,3],[37,1],[37,1],[37,3],[41,9],[41,7],[42,7],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[49,1],[43,4],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,3],[27,2],[27,2],[27,3],[27,4],[27,3],[27,1],[40,5],[22,2],[22,2],[48,3],[48,1],[23,1],[23,1],[23,1],[23,1],[83,6],[63,6],[84,8],[85,4],[55,4],[56,4],[57,4],[61,4],[62,4],[58,4],[59,4],[60,4],[29,5],[29,2],[98,1],[98,2],[30,7],[102,2],[102,1],[103,4],[103,3],[31,1],[31,1],[31,1],[106,5],[107,7],[108,5],[112,5],[112,5],[112,5],[112,5],[114,3],[114,1],[115,2],[116,3],[116,2],[34,4],[34,3],[28,4],[28,4]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -90,7 +90,7 @@ case 1:
 break;
 case 2:
  
-        this.$ = DataType.INT; 
+        this.$ = DataType.INTEGER; 
     
 break;
 case 3:
@@ -105,7 +105,7 @@ case 4:
 break;
 case 5:
  
-        this.$ = DataType.CHAR; 
+        this.$ = DataType.CHARACTER; 
     
 break;
 case 6:
@@ -118,7 +118,7 @@ case 7:
         this.$ = DataType.DYNAMICLIST
     
 break;
-case 8: case 12:
+case 8: case 12: case 13:
 
         this.$ = $$[$0-1];
     
@@ -190,24 +190,187 @@ case 34:
         this.$ = new DynamicList(getToken(_$[$0-6]), { id: $$[$0-6], type: $$[$0-1] });
     
 break;
-case 54: case 55: case 56: case 57: case 58: case 59: case 60: case 61: case 62: case 63: case 64: case 65: case 66: case 67: case 70: case 72:
+case 35:
 
-        this.$ = new ExpValue(getToken(_$[$0-2]));
+        this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.DECIMAL })
     
 break;
-case 68: case 69:
+case 36:
 
-        this.$ = new ExpValue(getToken(_$[$0-1]));
+        this.$ = new Value(getToken(_$[$0]), { 
+            value: $$[$0].substring(1, $$[$0].length - 1), 
+            type: DataType.STRING })
+    
+break;
+case 37:
+
+        this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.ID })
+    
+break;
+case 38:
+
+        this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.INTEGER })
+    
+break;
+case 39:
+
+        this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.CHARACTER })
+    
+break;
+case 40: case 41:
+
+        this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.BOOLEAN })
+    
+break;
+case 53:
+
+        this.$ = new VectorValue(getToken(_$[$0-3]), $$[$0-1], { 
+            value: $$[$0-3], type: DataType.STRING });
+    
+break;
+case 54:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.PLUS });
+    
+break;
+case 55:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.EQUALSEQUALS });
+    
+break;
+case 56:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.MOREOREQUALS });
+    
+break;
+case 57:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.LESSOREQUALS });
+    
+break;
+case 58:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.NONEQUALS });
+    
+break;
+case 59:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.DIVISION });
+    
+break;
+case 60:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.MODULE });
+    
+break;
+case 61:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.POWER });
+    
+break;
+case 62:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.TIMES });
+    
+break;
+case 63:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.MINUS });
+    
+break;
+case 64:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.MINOR });
+    
+break;
+case 65:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.MAJOR });
+    
+break;
+case 66:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator: Operator.AND });
+    
+break;
+case 67:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { 
+            left: $$[$0-2], right: $$[$0], operator:Operator.OR });
+    
+break;
+case 68:
+
+        this.$ = new Expression(getToken(_$[$0-1]), { 
+            left: $$[$0], operator: Operator.NOT });
+    
+break;
+case 69:
+
+        this.$ = new Expression(getToken(_$[$0-1]), { 
+            left: $$[$0], operator: Operator.NEGATION });
+    
+break;
+case 70:
+
+        this.$ = new Expression(getToken(_$[$0-2]), { left: $$[$0-1] });
     
 break;
 case 71:
 
-        this.$ = new ExpValue(getToken(_$[$0-3]));
+        this.$ = new Expression(getToken(_$[$0-3]), { left: $$[$0] } );
+    
+break;
+case 72:
+
+        this.$ = new Expression(getToken(_$[$0-2]));
     
 break;
 case 73:
 
-        this.$ = new ExpValue(getToken(_$[$0]));
+        this.$ = new Expression(getToken(_$[$0]), { value: $$[$0] });
+    
+break;
+case 75:
+
+        this.$ = new Expression(getToken(_$[$0-1]), { 
+            left: new Value(getToken(_$[$0-1]), { 
+                value: $$[$0-1], type: DataType.ID }),
+            operator: Operator.PLUSPLUS
+    })
+break;
+case 76:
+
+        this.$ = new Expression(getToken(_$[$0-1]), { 
+            left: new Value(getToken(_$[$0-1]), { 
+                value: $$[$0-1], type: DataType.ID }),
+            operator: Operator.MINUSMINUS
+        })   
+    
+break;
+case 121:
+
+        this.$ = new FunctionBlock(getToken(_$[$0-3]), { 
+            id: $$[$0-2], type: $$[$0-3], content: $$[$0] });
+    
+break;
+case 122:
+
+        this.$ = new FunctionBlock(getToken(_$[$0-3]), { 
+            id: $$[$0-2], type: 'void', content: $$[$0] });
     
 break;
 }
@@ -361,13 +524,17 @@ parse: function parse(input) {
     return true;
 }};
 
-    const { DataType, getToken } = require('../compiler/utils')
+    const errors = require('../compiler/error')
+    const { DataType, getToken, Operator } = require('../compiler/utils')
     const { 
         Declaration, 
         Assignment,
         VectorAssignment,
-        DynamicList  } = require('../compiler/instruction/variable')
-    const { ExpValue } = require('../compiler/instruction/expression')
+        DynamicList,
+        Expression,
+        Value,
+        VectorValue,
+        FunctionBlock } = require('../compiler/instruction')
 
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
@@ -855,9 +1022,11 @@ case 77:return 38
 break;
 case 78:return 5
 break;
-case 79: console.error('Error léxico: ' 
-                              + yy_.yytext + ', en la linea: ' + yy_.yylloc.first_line 
-                              + ', en la columna: ' + yy_.yylloc.first_column); 
+case 79: errors.push({
+                                type: 'Lexical',
+                                token: { line: yy_.yylloc.first_line, col: yy_.yylloc.fist_column },
+                                msg: `${yy_.yytext} no reconocido`
+                            }); 
 break;
 }
 },

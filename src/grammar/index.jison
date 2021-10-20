@@ -1,11 +1,15 @@
 %{
-    const { DataType, getToken } = require('../compiler/utils')
+    const errors = require('../compiler/error')
+    const { DataType, getToken, Operator } = require('../compiler/utils')
     const { 
         Declaration, 
         Assignment,
         VectorAssignment,
-        DynamicList  } = require('../compiler/instruction/variable')
-    const { ExpValue } = require('../compiler/instruction/expression')
+        DynamicList,
+        Expression,
+        Value,
+        VectorValue,
+        FunctionBlock } = require('../compiler/instruction')
 %}
 
 %lex
@@ -33,14 +37,14 @@
 "<="                        return 'lessOrEquals'
 ">="                        return 'moreOrEquals'
 "=="                        return 'equalsEquals'
-"!="                        return 'notEquals'
+"!="                        return 'nonEquals'
 "--"                        return 'minusMinus'
 "++"                        return 'plusPlus'
 
 "?"                         return 'questionMark'
 ":"                         return 'colom'
 
-"/"                         return 'divition'
+"/"                         return 'division'
 "%"                         return 'module'
 "*"                         return 'times'
 "^"                         return 'power'
@@ -120,9 +124,11 @@ NULLCHAR "\\0"
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 
 <<EOF>>				        return 'EOF'
-.					        { console.error('Error léxico: ' 
-                              + yytext + ', en la linea: ' + yylloc.first_line 
-                              + ', en la columna: ' + yylloc.first_column); }
+.					        { errors.push({
+                                type: 'Lexical',
+                                token: { line: yylloc.first_line, col: yylloc.fist_column },
+                                msg: `${yytext} no reconocido`
+                            }); }
 
 /lex
 
@@ -135,10 +141,10 @@ NULLCHAR "\\0"
 /* PRESEDENCIA */
 %left 'minus'
 %nonassoc 'power'
-%left 'divition' 'times'
+%left 'division' 'times'
 %left 'plus' 'minus'
 %left 'module'
-%left 'equalsEquals' 'notEquals' 'minor' 'lessOrEquals' 'major' 'moreOrEquals'
+%left 'equalsEquals' 'nonEquals' 'minor' 'lessOrEquals' 'major' 'moreOrEquals'
 %right 'not'
 %left 'and'
 %left 'or'
@@ -158,7 +164,7 @@ START : INSTRUCTIONS EOF {
 /* GLOBALES */
 TYPE : 
     intType { 
-        $$ = DataType.INT; 
+        $$ = DataType.INTEGER; 
     }
     | dblType  { 
         $$ = DataType.DECIMAL; 
@@ -167,7 +173,7 @@ TYPE :
         $$ = DataType.BOOLEAN; 
     } 
     | charType { 
-        $$ = DataType.CHAR; 
+        $$ = DataType.CHARACTER; 
     }
     | strType  { 
         $$ = DataType.STRING; 
@@ -197,7 +203,9 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION {
 INSTRUCTION : DECLARATION semicolom {
         $$ = $1;
     }
-| INCREMENTEXP semicolom | METHODS semicolom | breakRw semicolom
+    | INCREMENTEXP semicolom {
+        $$ = $1;
+    }  | METHODS semicolom | breakRw semicolom
 | continueRw semicolom | returnRw EXPRESSIONS semicolom | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
@@ -251,79 +259,132 @@ DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
-VARVALUE : decimal | text | id | integer | character | trBool 
-| flBool | FUNCTIONHEADER | TOLOWER | TOUPPER | LENGTHSEQ
+VARVALUE : decimal {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.DECIMAL })
+    }
+    | text {
+        $$ = new Value(getToken(@1), { 
+            value: $1.substring(1, $1.length - 1), 
+            type: DataType.STRING })
+    }
+    | id {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.ID })
+    }
+    | integer {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.INTEGER })
+    }
+    | character {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.CHARACTER })
+    }
+    | trBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
+    }
+    | flBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
+    }
+    | FUNCTIONHEADER | TOLOWER | TOUPPER | LENGTHSEQ
 | TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
 | GETVALUE | VECTORVALUE;
 
-VECTORVALUE : id openSquareBracket integer closeSquareBracket;
+VECTORVALUE : id openSquareBracket integer closeSquareBracket {
+        $$ = new VectorValue(getToken(@1), $3, { 
+            value: $1, type: DataType.STRING });
+    };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* TODAS LAS EXPRESIONES VALIDAS */
 EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.PLUS });
     }
     | EXPRESSIONS equalsEquals EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.EQUALSEQUALS });
     }
     | EXPRESSIONS moreOrEquals EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.MOREOREQUALS });
     }
     | EXPRESSIONS lessOrEquals EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.LESSOREQUALS });
     }
-    | EXPRESSIONS notEquals EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+    | EXPRESSIONS nonEquals EXPRESSIONS {
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.NONEQUALS });
     }
-    | EXPRESSIONS divition EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+    | EXPRESSIONS division EXPRESSIONS {
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.DIVISION });
     }
     | EXPRESSIONS module EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.MODULE });
     }
     | EXPRESSIONS power EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.POWER });
     }
     | EXPRESSIONS times EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.TIMES });
     }
     | EXPRESSIONS minus EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.MINUS });
     }
     | EXPRESSIONS minor EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.MINOR });
     }
     | EXPRESSIONS major EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.MAJOR });
     }
     | EXPRESSIONS and EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator: Operator.AND });
     }
     | EXPRESSIONS or EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $1, right: $3, operator:Operator.OR });
     }
     | not EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $2, operator: Operator.NOT });
     }
     | minus EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { 
+            left: $2, operator: Operator.NEGATION });
     }
     | openParenthesis EXPRESSIONS closeParenthesis {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { left: $2 });
     }
     | openParenthesis TYPE closeParenthesis EXPRESSIONS {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { left: $4 } );
     }
     | openParenthesis TERNARY closeParenthesis {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1));
     }
     | VARVALUE {
-        $$ = new ExpValue(getToken(@1));
+        $$ = new Expression(getToken(@1), { value: $1 });
     };
 
 TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS;
 
-INCREMENTEXP : id plusPlus | id minusMinus;
+INCREMENTEXP : id plusPlus {
+        $$ = new Expression(getToken(@1), { 
+            left: new Value(getToken(@1), { 
+                value: $1, type: DataType.ID }),
+            operator: Operator.PLUSPLUS
+    })}
+    | id minusMinus {
+        $$ = new Expression(getToken(@1), { 
+            left: new Value(getToken(@1), { 
+                value: $1, type: DataType.ID }),
+            operator: Operator.MINUSMINUS
+        })   
+    };
 
 EXPLIST : EXPLIST comma EXPRESSIONS {
         $$ = $1;
@@ -410,5 +471,11 @@ FUNCTIONPARAMS : openParenthesis PARAMSLIST closeParenthesis
 FUNCTIONHEADER : id openParenthesis EXPLIST closeParenthesis 
 | id openParenthesis closeParenthesis;
 
-FUNCTION : TYPE id FUNCTIONPARAMS BLOCKCONTENT 
-| voidType id FUNCTIONPARAMS BLOCKCONTENT;
+FUNCTION : TYPE id FUNCTIONPARAMS BLOCKCONTENT {
+        $$ = new FunctionBlock(getToken(@1), { 
+            id: $2, type: $1, content: $4 });
+    }
+    | voidType id FUNCTIONPARAMS BLOCKCONTENT {
+        $$ = new FunctionBlock(getToken(@1), { 
+            id: $2, type: 'void', content: $4 });
+    };

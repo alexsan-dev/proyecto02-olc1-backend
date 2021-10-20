@@ -1,5 +1,5 @@
-// UTILS
-import { TokenInfo } from 'compiler/utils'
+import Environment from 'compiler/runtime/environment'
+import { TokenInfo } from 'compiler/utils/types'
 
 // INSTRUCCIONES
 export type InstructionName =
@@ -8,12 +8,14 @@ export type InstructionName =
 	| 'VectorAssignment'
 	| 'DynamicList'
 	| 'Expression'
+	| 'Value'
+	| 'Function'
 abstract class Instruction {
 	// CONSTRUCTOR
 	constructor(public token: TokenInfo, public name: InstructionName) {}
 
 	// COMPILAR
-	public abstract compile(): void
+	public abstract compile(env: Environment, type?: string): boolean
 }
 
 export default Instruction

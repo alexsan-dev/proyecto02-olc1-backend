@@ -1,14 +1,36 @@
 // TIPOS DE DATOS
 enum DataType {
-	INT = 'INT',
-	DECIMAL = 'DECIMAL',
-	BOOLEAN = 'BOOLEAN',
-	CHAR = 'CHARACTER',
+	ID = 'ID',
 	STRING = 'STRING',
+	BOOLEAN = 'BOOLEAN',
+	INTEGER = 'INTEGER',
+	DECIMAL = 'DECIMAL',
 	DYNAMICLIST = 'LIST',
+	CHARACTER = 'CHARACTER',
 }
 
-export type DataValue = string | number | boolean
+export type DataValue = string | number | boolean | DataValue[]
+
+export enum Operator {
+	PLUS = '+',
+	MINUSMINUS = '--',
+	PLUSPLUS = '++',
+	MINUS = '-',
+	NEGATION = '-*',
+	DIVISION = '/',
+	TIMES = '*',
+	MODULE = '%',
+	POWER = '^',
+	EQUALSEQUALS = '==',
+	MOREOREQUALS = '>=',
+	MAJOR = '>',
+	LESSOREQUALS = '<=',
+	MINOR = '<',
+	NOT = '!',
+	NONEQUALS = '!=',
+	AND = '&&',
+	OR = '||',
+}
 
 // LINEAS Y COLUMNAS
 export interface JISONTokenInfo {

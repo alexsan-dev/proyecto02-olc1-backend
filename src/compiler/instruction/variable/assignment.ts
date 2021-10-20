@@ -1,8 +1,12 @@
 // TIPOS
-import DataType, { TokenInfo } from 'compiler/utils/types'
-import ExpValue from '../expression/value'
+import DataType, { TokenInfo } from '../../utils/types'
+import Environment from '../../runtime/environment'
+import Expression from '../expression/data'
 import DynamicList from './dynamicList'
-import Instruction from './models'
+import VectorAssignment from './vector'
+import Value from '../expression/value'
+import Instruction from '../models'
+import errors from '../../error'
 
 // ASIGNACIONES
 class Assignment extends Instruction {
@@ -12,35 +16,39 @@ class Assignment extends Instruction {
 		public props: {
 			vector?: VectorAssignment
 			list?: DynamicList
-			exp?: ExpValue
+			exp?: Expression
 			id?: string
 		}
 	) {
 		super(token, 'Assignment')
 	}
 
-	public compile(): void {
-		throw new Error('Method not implemented.')
-	}
-}
+	// COMPILAR TODAS LAS PROPIEDADES
+	public compile(env: Environment, type: DataType): boolean {
+		if (this.props.id) {
+			// INSTRUCCION
+			let instruction: VectorAssignment | DynamicList | Expression | undefined
 
-// ASIGNACIONES DE VECTORES
-export class VectorAssignment extends Instruction {
-	// CONSTRUCTOR
-	constructor(
-		token: TokenInfo,
-		public props: {
-			defValues?: ExpValue[]
-			type?: DataType
-			size?: number
-			id: string
-		}
-	) {
-		super(token, 'VectorAssignment')
-	}
+			// EXPRESIONES
+			if (this.props.exp) instruction = this.props.exp
+			else if (this.props.list) instruction = this.props.list
+			else if (this.props.vector) instruction = this.props.vector
 
-	public compile(): void {
-		throw new Error('Method not implemented.')
+			if (instruction) {
+				const value: Value | undefined = instruction.getValue(env)
+				if (type === value?.props.type) {
+					env.addVar(this.props.id, type, instruction.getValue(env))
+					return instruction.compile(env)
+				} else {
+					errors.push({
+						type: 'Semantic',
+						token: this.token,
+						msg: `No se puede asignar el tipo ${value?.props.type} a ${type}`,
+					})
+					return false
+				}
+			} else return false
+		} else return false
 	}
 }
 

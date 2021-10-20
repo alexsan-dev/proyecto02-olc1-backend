@@ -1,5 +1,6 @@
-import DataType, { TokenInfo } from 'compiler/utils/types'
-import Instruction from './models'
+import DataType, { TokenInfo } from '../../utils/types'
+import { Value } from '../expression'
+import Instruction from '../models'
 
 // ASIGNACIONES
 class DynamicList extends Instruction {
@@ -9,8 +10,13 @@ class DynamicList extends Instruction {
 	}
 
 	// COMPILAR
-	compile(): void {
-		console.log('compile')
+	public compile(): boolean {
+		return true
+	}
+
+	// OBTENER VALOR
+	public getValue(): Value {
+		return new Value(this.token, { value: [], type: DataType.DYNAMICLIST })
 	}
 }
 
