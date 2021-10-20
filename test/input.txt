@@ -43,3 +43,40 @@ switch( edad ) {
         append(myList, "No se que edad tengo");
         break;
 }
+
+
+for (int i=0; i<3; i++){
+    append(myList, "No se que edad tengo");
+
+    for (int i=0; i<3; i++){
+        if((1 + 2)*2 == 6) {
+            append(myList, 5);
+            break;
+        }
+    }
+}
+
+Int a=5;
+do{
+ If (a>=1 && a <3){
+     append(myList, 5);
+ }
+ Else{
+      append(myList, 5);
+      break;
+ }
+ a--;
+} while (a>0);
+
+
+//Ejemplos
+ //--> Dentro de un metodo
+
+ int i;
+ for(i = 0; i < 9; i++){
+ if(i==5){
+ return; //se detiene
+ }
+   append(myList, 5);
+ }
+ 

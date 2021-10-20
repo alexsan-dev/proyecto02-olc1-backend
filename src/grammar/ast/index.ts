@@ -7,6 +7,7 @@ enum DATATYPE {
 	BOOLEAN,
 	CHAR,
 	STRING,
+	DYNAMICLIST,
 }
 
 export default DATATYPE

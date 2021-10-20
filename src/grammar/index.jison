@@ -69,10 +69,18 @@
 
 'if'                        return 'ifRw'
 'else'                      return 'elseRw'
+
 'switch'                    return 'switchRw'
 'break'                     return 'breakRw'
 'case'                      return 'caseRw'
 'default'                   return 'defaultRw'
+
+'while'                     return 'whileRw'
+'for'                       return 'forRw'
+'do'                        return 'doRw'
+
+'continue'                  return 'continueRw'
+'return'                    return 'returnRw'
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* SECUENCIAS DE ESCAPE */
@@ -154,16 +162,13 @@ TYPE :
 /* INSTRUCCIONES */
 BLOCKCONTENT : openBracket INSTRUCTIONS closeBracket;
 
-INSTRUCTIONS : INSTRUCTIONS INSTRUCTION { 
-        $1.push($2); $$ = $1; 
-    }
-    | INSTRUCTION { 
-        $$ = [$1]; 
-    };
+INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
+| INSTRUCTION;
 
 INSTRUCTION : DECLARATION semicolom | LINEASSIGNMENT semicolom 
-| INCREMENTEXP semicolom | METHODS semicolom | CONTROLSEQ 
-| SWITCHSEQ { };
+| INCREMENTEXP semicolom | METHODS semicolom | breakRw semicolom
+| continueRw semicolom | returnRw semicolom
+| CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* DECLARACION DE VARIABLES */
@@ -251,12 +256,26 @@ CONSTROLSEQSYM : ifRw | elseRw ifRw;
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* SWITCH */
 SWITCHSEQ : switchRw openParenthesis EXPRESSIONS closeParenthesis
-openBracket SWITCHSEQCASES closeBracket {};
+openBracket SWITCHSEQCASES closeBracket;
 
 SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT
-| SWITCHSEQCONTENT 
-| SWITCHSEQCASES SWITCHSEQCONTENT breakRw semicolom
-| SWITCHSEQCONTENT breakRw semicolom {};
+| SWITCHSEQCONTENT;
 
 SWITCHSEQCONTENT : caseRw VARVALUE colom INSTRUCTIONS
-| defaultRw colom INSTRUCTIONS {};
+| defaultRw colom INSTRUCTIONS;
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* CICLOS */
+LOOPSEQ : WHILESEQ | DOWHILESEQ | FORSEQ;
+
+WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT;
+
+DOWHILESEQ : doRw BLOCKCONTENT 
+whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom;
+
+FORSEQ : forRw openParenthesis FORSEQPARAMS closeParenthesis BLOCKCONTENT;
+
+FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
+| DECLARATION semicolom EXPRESSIONS semicolom INCREMENTEXP
+| LINEASSIGNMENT semicolom EXPRESSIONS semicolom EXPRESSIONS
+| LINEASSIGNMENT semicolom EXPRESSIONS semicolom INCREMENTEXP;
