@@ -8,7 +8,6 @@ enum DATATYPE {
 	CHAR,
 	STRING,
 	DYNAMICLIST,
-	VOID,
 }
 
 export default DATATYPE
