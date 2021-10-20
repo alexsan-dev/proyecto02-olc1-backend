@@ -9,7 +9,7 @@ let globalAST
 try {
 	const input: Buffer = fs.readFileSync('./test/input.txt')
 	globalAST = parser.parse(input.toString())
-	console.log(globalAST)
+	console.log(JSON.stringify(globalAST, null, '\t'))
 } catch (err) {
 	console.error(err)
 }
