@@ -4,8 +4,8 @@ import Instruction from './models'
 // ASIGNACIONES
 class DynamicList extends Instruction {
 	// CONSTRUCTOR
-	constructor(public props: { token: TokenInfo; id: string; type: DataType }) {
-		super(props.token, 'DynamicList')
+	constructor(token: TokenInfo, public props: { id: string; type: DataType }) {
+		super(token, 'DynamicList')
 	}
 
 	// COMPILAR

@@ -5,12 +5,8 @@ import { Instruction } from '../variable'
 // ASIGNACIONES
 class ExpValue extends Instruction {
 	// CONSTRUCTOR
-	constructor(
-		public props: {
-			token: TokenInfo
-		}
-	) {
-		super(props.token, 'Expression')
+	constructor(token: TokenInfo) {
+		super(token, 'Expression')
 	}
 
 	public compile(): void {

@@ -129,17 +129,17 @@ case 9: case 10:
         this.$.push($$[$0]);
     
 break;
-case 11: case 25:
+case 11: case 25: case 78:
 
         this.$ = [$$[$0]];
     
 break;
 case 23:
 
-        this.$ = new Declaration({ token: _$[$0-1], type: $$[$0-1], assignments: $$[$0] });
+        this.$ = new Declaration(getToken(_$[$0-1]), { type: $$[$0-1], assignments: $$[$0] });
     
 break;
-case 24:
+case 24: case 77:
 
         this.$ = $$[$0-2];
         this.$.push($$[$0]);
@@ -147,69 +147,67 @@ case 24:
 break;
 case 26:
 
-        this.$ = new Assignment({ token: _$[$0], id: $$[$0] });
+        this.$ = new Assignment(getToken(_$[$0]), { id: $$[$0] });
     
 break;
 case 27:
 
-        this.$ = new Assignment({ token: _$[$0-2], id: $$[$0-2], exp: $$[$0] });  
+        this.$ = new Assignment(getToken(_$[$0-2]), { id: $$[$0-2], exp: $$[$0] });  
     
 break;
 case 28:
 
-        this.$ = new Assignment({ token: _$[$0-2], id: $$[$0-2] });
+        this.$ = new Assignment(getToken(_$[$0-2]), { id: $$[$0-2] });
     
 break;
 case 29:
 
-        this.$ = new Assignment({ token: _$[$0], vector: $$[$0] });
+        this.$ = new Assignment(getToken(_$[$0]), { vector: $$[$0] });
     
 break;
 case 30:
 
-        this.$ = new Assignment({ token: _$[$0], list: $$[$0] });
+        this.$ = new Assignment(getToken(_$[$0]), { list: $$[$0] });
     
 break;
 case 31:
 
-        this.$ = new Assignment({ token: _$[$0-2], id: '' });
+        this.$ = new Assignment(getToken(_$[$0-2]), { id: '' });
     
 break;
 case 32:
 
-        this.$ = new VectorAssignment({ 
-            token: _$[$0-8], type: $$[$0-3], id: $$[$0-8], size: $$[$0-1]  });
+        this.$ = new VectorAssignment(getToken(_$[$0-8]), { type: $$[$0-3], id: $$[$0-8], size: $$[$0-1] });
     
 break;
 case 33:
 
-        this.$ = new VectorAssignment({ 
-            token: _$[$0-6], id: $$[$0-6], defValues: [] });
+        this.$ = new VectorAssignment(getToken(_$[$0-6]), { id: $$[$0-6], defValues: $$[$0-1] });
     
 break;
 case 34:
 
-        this.$ = new DynamicList({ token: _$[$0-6], id: $$[$0-6], type: $$[$0-1] });
+        this.$ = new DynamicList(getToken(_$[$0-6]), { id: $$[$0-6], type: $$[$0-1] });
     
 break;
 case 54: case 55: case 56: case 57: case 58: case 59: case 60: case 61: case 62: case 63: case 64: case 65: case 66: case 67: case 70: case 72:
 
-        this.$ = new ExpValue({ token: _$[$0-2] });
+        this.$ = new ExpValue(getToken(_$[$0-2]));
     
 break;
-case 69:
+case 68: case 69:
 
-        this.$ = new ExpValue({ token: _$[$0-1] });
+        this.$ = new ExpValue(getToken(_$[$0-1]));
     
 break;
 case 71:
 
-        this.$ = new ExpValue({ token: _$[$0-3] });
+        this.$ = new ExpValue(getToken(_$[$0-3]));
     
 break;
 case 73:
 
-        this.$ = new ExpValue({ token: _$[$0] });
+        this.$ = new ExpValue(getToken(_$[$0]));
     
 break;
 }
@@ -363,7 +361,7 @@ parse: function parse(input) {
     return true;
 }};
 
-    const { DataType } = require('../compiler/utils')
+    const { DataType, getToken } = require('../compiler/utils')
     const { 
         Declaration, 
         Assignment,

@@ -1,5 +1,5 @@
 %{
-    const { DataType } = require('../compiler/utils')
+    const { DataType, getToken } = require('../compiler/utils')
     const { 
         Declaration, 
         Assignment,
@@ -206,7 +206,7 @@ MAIN : startRw withRw FUNCTIONHEADER semicolom;
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* DECLARACION DE VARIABLES */
 DECLARATION : TYPE ASSIGNMENTS {
-        $$ = new Declaration({ token: @1, type: $1, assignments: $2 });
+        $$ = new Declaration(getToken(@1), { type: $1, assignments: $2 });
     };
 
 ASSIGNMENTS : ASSIGNMENTS comma ASSIGNMENT {
@@ -218,37 +218,35 @@ ASSIGNMENTS : ASSIGNMENTS comma ASSIGNMENT {
     };
 
 ASSIGNMENT : id {
-        $$ = new Assignment({ token: @1, id: $1 });
+        $$ = new Assignment(getToken(@1), { id: $1 });
     }
     | id equals EXPRESSIONS {
-        $$ = new Assignment({ token: @1, id: $1, exp: $3 });  
+        $$ = new Assignment(getToken(@1), { id: $1, exp: $3 });  
     }
     | id equals TERNARY {
-        $$ = new Assignment({ token: @1, id: $1 });
+        $$ = new Assignment(getToken(@1), { id: $1 });
     }
     | VECTORASSIGNMENT {
-        $$ = new Assignment({ token: @1, vector: $1 });
+        $$ = new Assignment(getToken(@1), { vector: $1 });
     }
     | DYNAMICLIST {
-        $$ = new Assignment({ token: @1, list: $1 });
+        $$ = new Assignment(getToken(@1), { list: $1 });
     }
     | VECTORVALUE equals EXPRESSIONS {
-        $$ = new Assignment({ token: @1, id: '' });
+        $$ = new Assignment(getToken(@1), { id: '' });
     };
 
 VECTORASSIGNMENT : id openSquareBracket closeSquareBracket 
     equals newRw TYPE openSquareBracket integer closeSquareBracket {
-        $$ = new VectorAssignment({ 
-            token: @1, type: $6, id: $1, size: $8  });
+        $$ = new VectorAssignment(getToken(@1), { type: $6, id: $1, size: $8 });
     }
     | id openSquareBracket closeSquareBracket
     equals openBracket EXPLIST closeBracket {
-        $$ = new VectorAssignment({ 
-            token: @1, id: $1, defValues: [] });
+        $$ = new VectorAssignment(getToken(@1), { id: $1, defValues: $6 });
     };
 
 DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
-        $$ = new DynamicList({ token: @1, id: $1, type: $6 });
+        $$ = new DynamicList(getToken(@1), { id: $1, type: $6 });
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -263,69 +261,77 @@ VECTORVALUE : id openSquareBracket integer closeSquareBracket;
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* TODAS LAS EXPRESIONES VALIDAS */
 EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS equalsEquals EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS moreOrEquals EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS lessOrEquals EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS notEquals EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS divition EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS module EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS power EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS times EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS minus EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS minor EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS major EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS and EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | EXPRESSIONS or EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
-    | not EXPRESSIONS | minus EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+    | not EXPRESSIONS {
+        $$ = new ExpValue(getToken(@1));
+    }
+    | minus EXPRESSIONS {
+        $$ = new ExpValue(getToken(@1));
     }
     | openParenthesis EXPRESSIONS closeParenthesis {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | openParenthesis TYPE closeParenthesis EXPRESSIONS {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | openParenthesis TERNARY closeParenthesis {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     }
     | VARVALUE {
-        $$ = new ExpValue({ token: @1 });
+        $$ = new ExpValue(getToken(@1));
     };
 
 TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS;
 
 INCREMENTEXP : id plusPlus | id minusMinus;
 
-EXPLIST : EXPLIST comma EXPRESSIONS
-| EXPRESSIONS;
+EXPLIST : EXPLIST comma EXPRESSIONS {
+        $$ = $1;
+        $$.push($3);
+    }
+    | EXPRESSIONS {
+        $$ = [$1];
+    };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */

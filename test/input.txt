@@ -1,5 +1,1 @@
-DynamicList<int> numeros = new DynamicList<int>;
 String textos[] = { "texto1", "texto2", "texto3" };
-Boolean bools[] = new Boolean[3];
-String name = "alex";
-int index = 0;

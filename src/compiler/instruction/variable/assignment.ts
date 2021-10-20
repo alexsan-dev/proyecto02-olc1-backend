@@ -1,5 +1,5 @@
 // TIPOS
-import DataType, { DataValue, TokenInfo } from 'compiler/utils/types'
+import DataType, { TokenInfo } from 'compiler/utils/types'
 import ExpValue from '../expression/value'
 import DynamicList from './dynamicList'
 import Instruction from './models'
@@ -8,15 +8,15 @@ import Instruction from './models'
 class Assignment extends Instruction {
 	// CONSTRUCTOR
 	constructor(
+		token: TokenInfo,
 		public props: {
 			vector?: VectorAssignment
 			list?: DynamicList
-			token: TokenInfo
 			exp?: ExpValue
 			id?: string
 		}
 	) {
-		super(props.token, 'Assignment')
+		super(token, 'Assignment')
 	}
 
 	public compile(): void {
@@ -28,15 +28,15 @@ class Assignment extends Instruction {
 export class VectorAssignment extends Instruction {
 	// CONSTRUCTOR
 	constructor(
+		token: TokenInfo,
 		public props: {
-			defValues?: DataValue[]
-			token: TokenInfo
+			defValues?: ExpValue[]
 			type?: DataType
 			size?: number
 			id: string
 		}
 	) {
-		super(props.token, 'VectorAssignment')
+		super(token, 'VectorAssignment')
 	}
 
 	public compile(): void {

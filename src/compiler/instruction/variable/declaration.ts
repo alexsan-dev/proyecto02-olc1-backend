@@ -6,8 +6,8 @@ import Instruction from './models'
 // DECLARACIONES
 class Declaration extends Instruction {
 	// CONSTRUCTOR
-	constructor(public props: { type: DataType; assignments: Assignment[]; token: TokenInfo }) {
-		super(props.token, 'Declaration')
+	constructor(token: TokenInfo, public props: { type: DataType; assignments: Assignment[] }) {
+		super(token, 'Declaration')
 	}
 
 	public compile(): void {
