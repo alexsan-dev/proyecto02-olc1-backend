@@ -12,15 +12,12 @@ class Declaration extends Instruction {
 	}
 
 	// COMPILAR ASIGNACIONES
-	public compile(): boolean {
-		// CREAR NUEVO ENTORNO
-		const environment = new Environment()
-
+	public compile(env: Environment): boolean {
 		const compiles = this.props.assignments.map((assignment: Assignment) =>
-			assignment.compile(environment, this.props.type)
+			assignment.compile(env, this.props.type)
 		)
 
-		console.log(JSON.stringify(environment, null, 2))
+		console.log(JSON.stringify(env, null, 2))
 		return compiles.every((compile: boolean) => compile === true)
 	}
 }

@@ -19,12 +19,12 @@ const operateValues = (
 	right?: Value
 ): Value | undefined => {
 	// PROPIEDADES DE EXP IZQUIERDA
-	const lType: DataType | undefined = left.props.type
 	const lValue: DataValue | undefined = left.getValue(env)
+	const lType: DataType | undefined = left.props.type
 
 	// PROPIEDADES DE EXP DERECHA
-	const rType: DataType | undefined = right?.props.type
 	const rValue: DataValue | undefined = right?.getValue(env)
+	const rType: DataType | undefined = right?.props.type
 
 	// RESULTADOS
 	let value: DataValue | undefined

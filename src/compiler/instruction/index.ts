@@ -5,8 +5,11 @@ import VectorAssignment from './variable/vector'
 import Declaration from './variable/declaration'
 import FunctionBlock from './methods/functions'
 import Assignment from './variable/assignment'
+import WriteLine from './methods/writeLine'
 import Expression from './expression/data'
+import FunctionCall from './methods/call'
 import Instruction from './models'
+import Main from './methods/main'
 
 // EXPORTS
 export {
@@ -18,5 +21,8 @@ export {
 	VectorValue,
 	Expression,
 	FunctionBlock,
+	FunctionCall,
+	WriteLine,
+	Main,
 }
 export default Instruction

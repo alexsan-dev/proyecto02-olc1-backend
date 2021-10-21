@@ -10,6 +10,9 @@ export type InstructionName =
 	| 'Expression'
 	| 'Value'
 	| 'Function'
+	| 'FunctionCall'
+	| 'Main'
+
 abstract class Instruction {
 	// CONSTRUCTOR
 	constructor(public token: TokenInfo, public name: InstructionName) {}

@@ -1,40 +1,53 @@
-import { DataType, TokenInfo } from '../../utils'
+import { DataType, DataValue, TokenInfo } from '../../utils'
 import Environment from '../../runtime/environment'
 import Instruction from '../models'
 
 class FunctionBlock extends Instruction {
 	// GLOBALES
-	private env: Environment
+	private env: Environment | undefined
+	private functionValue: DataValue | undefined
 
 	// CONSTRUCTOR
 	constructor(
 		public token: TokenInfo,
 		public props: {
-			type: DataType
 			id: string
+			type: DataType | 'void'
 			content: Instruction[]
+			params: { type: DataType; id: string }[]
 		}
 	) {
 		super(token, 'Function')
 		this.env = {} as Environment
+		this.functionValue = undefined
+	}
+
+	// OBTENER VALOR DE FUNCION
+	public getValue(): DataValue | undefined {
+		return this.functionValue
+	}
+
+	// ASIGNAR ENTORNO
+	public setEnv(env: Environment): void {
+		this.env = new Environment(env)
 	}
 
 	// COMPILAR FUNCION
-	public compile(env: Environment): boolean {
-		// CREAR NUEVO ENTORNO
-		const environment = new Environment(env)
-		this.env = environment
+	public compile(): boolean {
+		// AGREGAR PARAMETROS A ENTORNO LOCAL
+		this.props.params.forEach((param) => this.env?.addVar(param.id, param.type, undefined))
 
 		// COMPILAR CONTENIDO
 		const compiles: boolean[] = this.props.content.map((content: Instruction) =>
-			content.compile(environment)
+			this.env ? content.compile(this.env) : false
 		)
+		this.functionValue = undefined // TODO:  Agregar return de funcion
 		return compiles.every((result: boolean) => result === true)
 	}
 
 	// OBTENER ENTORNO DE FUNCION
-	public getEnv(): Environment {
-		return this.env
+	public getEnv(env: Environment): Environment {
+		return this.env || new Environment(env)
 	}
 }
 

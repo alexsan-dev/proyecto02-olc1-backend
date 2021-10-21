@@ -1,18 +1,15 @@
 // TOOLS
 import errors from './compiler/error'
+import compile from './compiler'
 import parser from './grammar'
 import fs from 'fs'
-
-// GLOBALES
-let globalAST
 
 // INICIAR PARSER
 try {
 	const input: Buffer = fs.readFileSync('./test/input.txt')
-	globalAST = parser.parse(input.toString())
-
-	globalAST[0].compile()
-	console.log(errors)
+	const instructions = parser.parse(input.toString())
+	compile(instructions)
+	if (errors.length) console.log('Errores: ' + JSON.stringify(errors, null, 2))
 } catch (err) {
 	console.error(err)
 }

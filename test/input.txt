@@ -1,0 +1,7 @@
+String hello = "Hello world";
+
+void init() {
+  writeLine(hello + 1);
+}
+
+start with init();

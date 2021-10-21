@@ -2,6 +2,7 @@
     const errors = require('../compiler/error')
     const { DataType, getToken, Operator } = require('../compiler/utils')
     const { 
+        Main,
         Declaration, 
         Assignment,
         VectorAssignment,
@@ -9,7 +10,9 @@
         Expression,
         Value,
         VectorValue,
-        FunctionBlock } = require('../compiler/instruction')
+        FunctionBlock, 
+        FunctionCall, 
+        WriteLine } = require('../compiler/instruction')
 %}
 
 %lex
@@ -205,11 +208,17 @@ INSTRUCTION : DECLARATION semicolom {
     }
     | INCREMENTEXP semicolom {
         $$ = $1;
-    }  | METHODS semicolom | breakRw semicolom
+    }  
+    | METHODS semicolom {
+        $$ = $1;
+    }
+    | breakRw semicolom
 | continueRw semicolom | returnRw EXPRESSIONS semicolom | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
-MAIN : startRw withRw FUNCTIONHEADER semicolom;
+MAIN : startRw withRw FUNCTIONCALL semicolom {
+        $$ = new Main(getToken(@1), $3);
+};
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* DECLARACION DE VARIABLES */
@@ -263,9 +272,7 @@ VARVALUE : decimal {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.DECIMAL })
     }
     | text {
-        $$ = new Value(getToken(@1), { 
-            value: $1.substring(1, $1.length - 1), 
-            type: DataType.STRING })
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.STRING })
     }
     | id {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.ID })
@@ -282,7 +289,7 @@ VARVALUE : decimal {
     | flBool {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
     }
-    | FUNCTIONHEADER | TOLOWER | TOUPPER | LENGTHSEQ
+    | FUNCTIONCALL | TOLOWER | TOUPPER | LENGTHSEQ
 | TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
 | GETVALUE | VECTORVALUE;
 
@@ -396,7 +403,10 @@ EXPLIST : EXPLIST comma EXPRESSIONS {
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | SETVALUE | FUNCTIONHEADER | WRITELINE;
+METHODS : APPEND | SETVALUE | FUNCTIONCALL 
+    | WRITELINE {
+        $$ = $1;
+    };
 
 APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 
@@ -405,7 +415,9 @@ GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis;
 SETVALUE : setValueRw openParenthesis 
 id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis;
 
-WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis;
+WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new WriteLine(getToken(@1), { id:'writeLine', params: [$3] });
+    };
 
 TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;
 
@@ -460,22 +472,37 @@ FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* METODOS */
-PARAMSLIST : PARAMSLIST comma PARAMVAR
-| PARAMVAR;
+PARAMSLIST : PARAMSLIST comma PARAMVAR {
+        $$ = $1;
+        $$.push($3);
+    }
+    | PARAMVAR {
+        $$ = [$1];
+    };
 
-PARAMVAR : TYPE id;
+PARAMVAR : TYPE id {
+        $$ = { type: $1, id: $2 };
+    };
 
-FUNCTIONPARAMS : openParenthesis PARAMSLIST closeParenthesis
-| openParenthesis closeParenthesis; 
-
-FUNCTIONHEADER : id openParenthesis EXPLIST closeParenthesis 
-| id openParenthesis closeParenthesis;
+FUNCTIONPARAMS : openParenthesis PARAMSLIST closeParenthesis {
+        $$ = $2;
+    }
+    | openParenthesis closeParenthesis {
+        $$ = [];
+    }; 
 
 FUNCTION : TYPE id FUNCTIONPARAMS BLOCKCONTENT {
         $$ = new FunctionBlock(getToken(@1), { 
-            id: $2, type: $1, content: $4 });
+            id: $2, type: $1, params: $3, content: $4 });
     }
     | voidType id FUNCTIONPARAMS BLOCKCONTENT {
         $$ = new FunctionBlock(getToken(@1), { 
-            id: $2, type: 'void', content: $4 });
+            id: $2, type: 'void', params: $3, content: $4 });
+    };
+
+FUNCTIONCALL : id openParenthesis EXPLIST closeParenthesis {
+        $$ = new FunctionCall(getToken(@1), { params: $3, id: $1 })
+    } 
+    | id openParenthesis closeParenthesis {
+        $$ = new FunctionCall(getToken(@1), { params: [], id: $1 })
     };
