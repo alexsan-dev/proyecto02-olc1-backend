@@ -1,11 +1,13 @@
-import { DataType, DataValue, TokenInfo } from '../../utils'
+import { DataType, TokenInfo } from '../../utils'
 import Environment from '../../runtime/environment'
+import Value from '../expression/value'
 import Instruction from '../models'
+import errors from '../../error'
 
 class FunctionBlock extends Instruction {
 	// GLOBALES
 	private env: Environment | undefined
-	private functionValue: DataValue | undefined
+	private functionValue: Value | undefined
 
 	// CONSTRUCTOR
 	constructor(
@@ -23,13 +25,13 @@ class FunctionBlock extends Instruction {
 	}
 
 	// OBTENER VALOR DE FUNCION
-	public getValue(): DataValue | undefined {
+	public getValue(): Value | undefined {
 		return this.functionValue
 	}
 
 	// ASIGNAR ENTORNO
 	public setEnv(env: Environment): void {
-		this.env = new Environment(env)
+		this.env = new Environment('Function', env)
 	}
 
 	// COMPILAR FUNCION
@@ -41,13 +43,26 @@ class FunctionBlock extends Instruction {
 		const compiles: boolean[] = this.props.content.map((content: Instruction) =>
 			this.env ? content.compile(this.env) : false
 		)
-		this.functionValue = undefined // TODO:  Agregar return de funcion
-		return compiles.every((result: boolean) => result === true)
+
+		this.functionValue = this.env?.getVar('return')
+
+		if (this.props.type !== 'void') {
+			if (this.props.type === this.functionValue?.props.type) {
+				return compiles.every((result: boolean) => result === true)
+			} else {
+				errors.push({
+					type: 'Semantic',
+					token: this.token,
+					msg: `La funcion retorna un ${this.functionValue?.props.type} pero se esperaba un ${this.props.type}`,
+				})
+				return false
+			}
+		} else return true
 	}
 
 	// OBTENER ENTORNO DE FUNCION
 	public getEnv(env: Environment): Environment {
-		return this.env || new Environment(env)
+		return this.env || new Environment('Function', env)
 	}
 }
 

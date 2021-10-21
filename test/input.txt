@@ -1,7 +1,13 @@
 String hello = "Hello world";
 
+double getSum(int a, int b, double c) {
+  return (a + b) * c;
+}
+
 void init() {
-  writeLine(hello + 1);
+  double sum = getSum(2, 1, 2.0);
+  writeLine(sum);
+  writeLine(hello);
 }
 
 start with init();

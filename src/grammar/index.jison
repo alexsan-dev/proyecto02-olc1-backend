@@ -12,7 +12,8 @@
         VectorValue,
         FunctionBlock, 
         FunctionCall, 
-        WriteLine } = require('../compiler/instruction')
+        WriteLine, 
+        ReturnValue } = require('../compiler/instruction')
 %}
 
 %lex
@@ -170,7 +171,7 @@ TYPE :
         $$ = DataType.INTEGER; 
     }
     | dblType  { 
-        $$ = DataType.DECIMAL; 
+        $$ = DataType.DOUBLE; 
     } 
     | boolType { 
         $$ = DataType.BOOLEAN; 
@@ -213,7 +214,11 @@ INSTRUCTION : DECLARATION semicolom {
         $$ = $1;
     }
     | breakRw semicolom
-| continueRw semicolom | returnRw EXPRESSIONS semicolom | FUNCTION
+| continueRw semicolom 
+    | returnRw EXPRESSIONS semicolom {
+        $$ = new ReturnValue(getToken(@1), { content: $2 });
+    }
+    | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
 MAIN : startRw withRw FUNCTIONCALL semicolom {
@@ -269,7 +274,7 @@ DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
 VARVALUE : decimal {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.DECIMAL })
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.DOUBLE })
     }
     | text {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.STRING })
@@ -289,7 +294,11 @@ VARVALUE : decimal {
     | flBool {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
     }
-    | FUNCTIONCALL | TOLOWER | TOUPPER | LENGTHSEQ
+    | FUNCTIONCALL {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.ID, fromCall: $1 })
+    }
+    | TOLOWER | TOUPPER | LENGTHSEQ
 | TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
 | GETVALUE | VECTORVALUE;
 

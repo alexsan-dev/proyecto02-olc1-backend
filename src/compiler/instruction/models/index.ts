@@ -12,6 +12,7 @@ export type InstructionName =
 	| 'Function'
 	| 'FunctionCall'
 	| 'Main'
+	| 'Return'
 
 abstract class Instruction {
 	// CONSTRUCTOR

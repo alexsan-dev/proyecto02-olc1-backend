@@ -35,18 +35,21 @@ class Assignment extends Instruction {
 			else if (this.props.vector) instruction = this.props.vector
 
 			if (instruction) {
-				const value: Value | undefined = instruction.getValue(env)
-				if (type === value?.props.type) {
-					env.addVar(this.props.id, type, instruction.getValue(env))
-					return instruction.compile(env)
-				} else {
-					errors.push({
-						type: 'Semantic',
-						token: this.token,
-						msg: `No se puede asignar el tipo ${value?.props.type} a ${type}`,
-					})
-					return false
-				}
+				if (instruction.compile(env)) {
+					const value: Value | undefined = instruction.getValue(env)
+
+					if (type === value?.props.type) {
+						env.addVar(this.props.id, type, value)
+						return true
+					} else {
+						errors.push({
+							type: 'Semantic',
+							token: this.token,
+							msg: `No se puede asignar el tipo ${value?.props.type} a ${type}`,
+						})
+						return false
+					}
+				} else return false
 			} else return false
 		} else return false
 	}

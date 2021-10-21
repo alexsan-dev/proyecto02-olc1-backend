@@ -17,7 +17,6 @@ class Declaration extends Instruction {
 			assignment.compile(env, this.props.type)
 		)
 
-		console.log(JSON.stringify(env, null, 2))
 		return compiles.every((compile: boolean) => compile === true)
 	}
 }

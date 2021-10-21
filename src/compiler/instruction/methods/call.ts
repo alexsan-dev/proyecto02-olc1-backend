@@ -1,12 +1,14 @@
-import { DataType, DataValue, TokenInfo } from '../../utils'
+import { DataType, TokenInfo } from '../../utils'
 import Environment from '../../runtime/environment'
-import { Expression, FunctionBlock, Value } from '..'
+import Expression from '../expression/data'
+import Value from '../expression/value'
+import FunctionBlock from './functions'
 import Instruction from '../models'
 import errors from '../../error'
 
 class FunctionCall extends Instruction {
 	// GLOBALES
-	private functionValue: DataValue | undefined
+	private functionValue: Value | undefined
 
 	// CONSTRUCTOR
 	constructor(
@@ -21,7 +23,7 @@ class FunctionCall extends Instruction {
 	}
 
 	// OBTENER VALOR
-	public getValue(): DataValue | undefined {
+	public getValue(): Value | undefined {
 		return this.functionValue
 	}
 
@@ -38,6 +40,7 @@ class FunctionCall extends Instruction {
 		// EJECUTAR
 		if (functionBlock) {
 			// OBTENER EXPRESIONES
+			functionBlock.setEnv(env)
 			const functionEnv: Environment = functionBlock.getEnv(env)
 			const values: { value: Value; type: DataType }[] = this.props.params.map(
 				(exp: Expression) => ({
@@ -55,7 +58,9 @@ class FunctionCall extends Instruction {
 					values.forEach((value, index: number) => {
 						if (value.type === functionBlock.props.params[index].type) {
 							// ASIGNAR VARIABLE A ENTORNO DE FUNCION
-							functionEnv.setVar(functionBlock.props.params[index].id, value.value)
+							compile = value.value.compile(env)
+							if (compile)
+								functionEnv.addVar(functionBlock.props.params[index].id, value.type, value.value)
 						} else {
 							errors.push({
 								type: 'Semantic',
@@ -79,9 +84,7 @@ class FunctionCall extends Instruction {
 					})
 					return false
 				}
-			}
-
-			return true
+			} else return false
 		} else {
 			errors.push({
 				type: 'Semantic',

@@ -2,17 +2,35 @@
 // TIPOS
 import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
+import FunctionCall from '../methods/call'
 import Instruction from '../models'
 
 // ASIGNACIONES
 class Value extends Instruction {
 	// CONSTRUCTOR
-	constructor(token: TokenInfo, public props: { value: string | DataValue[]; type: DataType }) {
+	constructor(
+		token: TokenInfo,
+		public props: { value: string | DataValue[]; type: DataType; fromCall?: FunctionCall }
+	) {
 		super(token, 'Value')
 	}
 
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
-	public compile(): boolean {
+	public compile(env: Environment): boolean {
+		// CONVERTIR FUNCION A VALOR
+		if (this.props.fromCall?.compile(env)) {
+			const valueCall = this.props.fromCall.getValue()
+			if (valueCall?.props) this.props = valueCall?.props
+		}
+
+		// COMPILAR VALOR
+		if (this.props.type === DataType.ID) {
+			if (env) {
+				const newValue: Value | undefined = env.getVar(this.props.value as string)
+				this.props.value = newValue?.getValue(env)?.toString() || ''
+				this.props.type = newValue?.props.type || this.props.type
+			}
+		}
 		return true
 	}
 
@@ -27,7 +45,7 @@ class Value extends Instruction {
 					return strValue
 				case DataType.INTEGER:
 					return parseInt(strValue as string)
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					return parseFloat(strValue as string)
 				case DataType.BOOLEAN:
 					return (strValue as string).toLowerCase() === 'true'

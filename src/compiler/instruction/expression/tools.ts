@@ -40,9 +40,9 @@ const operateValues = (
 							value = (lValue as number) + (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) + (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.BOOLEAN:
 							value = (lValue as number) + (rValue ? 1 : 0)
@@ -60,23 +60,23 @@ const operateValues = (
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) + (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) + (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.BOOLEAN:
 							value = (lValue as number) + (rValue ? 1 : 0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) + (rValue as string).charCodeAt(0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.STRING:
 							value = (lValue as string) + (rValue as string)
@@ -92,9 +92,9 @@ const operateValues = (
 							value = (rValue ? 1 : 0) + (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (rValue ? 1 : 0) + (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.STRING:
 							value = lValue ? 'true' : 'false' + (rValue as string)
@@ -110,9 +110,9 @@ const operateValues = (
 							value = (lValue as string).charCodeAt(0) + (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as string).charCodeAt(0) + (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.STRING:
 							value = (lValue as string) + (rValue as string)
@@ -138,9 +138,9 @@ const operateValues = (
 							value = (lValue as number) - (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) - (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.BOOLEAN:
 							value = (lValue as number) - (rValue ? 1 : 0)
@@ -154,23 +154,23 @@ const operateValues = (
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) - (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) - (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.BOOLEAN:
 							value = (lValue as number) - (rValue ? 1 : 0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) - (rValue as string).charCodeAt(0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -182,9 +182,9 @@ const operateValues = (
 							value = (rValue ? 1 : 0) - (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (rValue ? 1 : 0) - (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -196,9 +196,9 @@ const operateValues = (
 							value = (lValue as string).charCodeAt(0) - (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as string).charCodeAt(0) - (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -216,9 +216,9 @@ const operateValues = (
 							value = (lValue as number) * (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) * (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) * (rValue as string).charCodeAt(0)
@@ -228,19 +228,19 @@ const operateValues = (
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) * (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) * (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) * (rValue as string).charCodeAt(0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -252,9 +252,9 @@ const operateValues = (
 							value = (lValue as string).charCodeAt(0) * (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as string).charCodeAt(0) * (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -273,9 +273,9 @@ const operateValues = (
 							value = (lValue as number) / (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) / (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) / (rValue as string).charCodeAt(0)
@@ -285,19 +285,19 @@ const operateValues = (
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) / (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) / (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) / (rValue as string).charCodeAt(0)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -309,9 +309,9 @@ const operateValues = (
 							value = (lValue as string).charCodeAt(0) / (rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as string).charCodeAt(0) / (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -329,23 +329,23 @@ const operateValues = (
 							value = Math.pow(lValue as number, rValue as number)
 							type = DataType.INTEGER
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = Math.pow(lValue as number, rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = Math.pow(lValue as number, rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = Math.pow(lValue as number, rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -361,25 +361,25 @@ const operateValues = (
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) % (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) % (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
 					}
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) % (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
-						case DataType.DECIMAL:
+						case DataType.DOUBLE:
 							value = (lValue as number) % (rValue as number)
-							type = DataType.DECIMAL
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -395,9 +395,9 @@ const operateValues = (
 					value = (lValue as number) * -1
 					type = DataType.INTEGER
 					break
-				case DataType.DECIMAL:
+				case DataType.DOUBLE:
 					value = (lValue as number) * -1
-					type = DataType.DECIMAL
+					type = DataType.DOUBLE
 					break
 				default:
 					break

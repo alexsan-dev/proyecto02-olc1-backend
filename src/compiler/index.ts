@@ -7,14 +7,13 @@ import errors from './error'
 // COMPILAR APLICACION
 const compile = (instructions: Instruction[]) => {
 	// CREAR ENTORNO GLOBAL
-	const globalEnv = new Environment()
+	const globalEnv = new Environment('Global')
 
 	// COMPILAR TODO PRIMERO
 	instructions.forEach((instruction: Instruction) => {
 		// GUARDAR VARIABLES Y FUNCIONES
 		if (instruction.name === 'Function') {
 			const functionBlock = instruction as FunctionBlock
-			functionBlock.setEnv(globalEnv)
 			globalEnv.addFunction(functionBlock.props.id, functionBlock.props.type, functionBlock)
 		} else if (instruction.name === 'Declaration') {
 			const declaration = instruction as Declaration

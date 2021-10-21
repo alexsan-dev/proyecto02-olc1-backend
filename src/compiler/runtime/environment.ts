@@ -4,6 +4,7 @@ import { Value } from '../instruction/expression'
 import { DataType, TokenInfo } from '../utils'
 import errors from '../error'
 
+type EnvironmentName = 'Function' | 'Main' | 'Global'
 class Environment {
 	// GLOBALES
 	private vars: {
@@ -21,22 +22,27 @@ class Environment {
 	}
 
 	// CONSTRUCTOR
-	constructor(private prevEnv?: Environment) {
+	constructor(private name: EnvironmentName, private prevEnv?: Environment) {
 		this.vars = {}
 		this.functions = {}
+	}
+
+	// OBTENER ENTORNO PREVIO
+	public getPrevEnv(): Environment | undefined {
+		return this.prevEnv
+	}
+
+	// OBTENER NOMBRE
+	public getName(): EnvironmentName {
+		return this.name
 	}
 
 	// AGREGAR VARIABLE
 	public addVar(id: string, type: DataType, value?: Value): void {
 		// NO EXISTE
-		if (this.getVar(id) === undefined) {
+		if (this.vars[id] === undefined) {
 			this.vars[id] = { value, type }
-		} else
-			errors.push({
-				type: 'Semantic',
-				token: this.getVar(id)?.token || ({} as TokenInfo),
-				msg: `La variable ${id} ya se ha declarado anteriormente.`,
-			})
+		}
 	}
 
 	// RE ASIGNAR VARIABLE
@@ -55,7 +61,7 @@ class Environment {
 
 	// OBTENER VARIABLE
 	public getVar(id: string): Value | undefined {
-		return this.vars[id]?.value || this.prevEnv?.getVar(id)
+		return this.vars[id]?.value === undefined ? this.prevEnv?.getVar(id) : this.vars[id]?.value
 	}
 
 	// AGREGAR FUNCION

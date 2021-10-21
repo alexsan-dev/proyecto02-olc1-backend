@@ -20,9 +20,9 @@ class Expression extends Instruction {
 	}
 
 	// COMPILAR VALORES
-	public compile(env: Environment): boolean {
-		const value: Value | undefined = this.getValue(env)
-		return value !== undefined
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public compile(_env?: Environment): boolean {
+		return true
 	}
 
 	// OBTENER VALOR REAL
@@ -44,7 +44,7 @@ class Expression extends Instruction {
 				if (result) return result
 			} else return left
 		} else if (this.props.value) {
-			if (this.props.value.compile()) return this.props.value
+			if (this.props.value.compile(env)) return this.props.value
 		}
 	}
 }
