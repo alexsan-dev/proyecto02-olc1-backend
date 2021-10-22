@@ -1,5 +1,7 @@
 // UTILS
-import Value, { VectorValue } from './expression/value'
+import VectorPosition from './variable/vectorPosition'
+import VectorValue from './expression/vectorValue'
+import ExpAssignment from './variable/expression'
 import DynamicList from './variable/dynamicList'
 import VectorAssignment from './variable/vector'
 import Declaration from './variable/declaration'
@@ -9,6 +11,7 @@ import Assignment from './variable/assignment'
 import WriteLine from './methods/writeLine'
 import Expression from './expression/data'
 import FunctionCall from './methods/call'
+import Value from './expression/value'
 import Instruction from './models'
 import Main from './methods/main'
 
@@ -20,6 +23,8 @@ export {
 	DynamicList,
 	Value,
 	VectorValue,
+	VectorPosition,
+	ExpAssignment,
 	Expression,
 	FunctionBlock,
 	FunctionCall,

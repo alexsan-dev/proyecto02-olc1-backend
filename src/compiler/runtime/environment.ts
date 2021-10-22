@@ -61,7 +61,8 @@ class Environment {
 
 	// OBTENER VARIABLE
 	public getVar(id: string): Value | undefined {
-		return this.vars[id]?.value === undefined ? this.prevEnv?.getVar(id) : this.vars[id]?.value
+		const value = this.vars[id]?.value ?? this.prevEnv?.getVar(id)
+		return value
 	}
 
 	// AGREGAR FUNCION

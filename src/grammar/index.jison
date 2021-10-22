@@ -4,7 +4,7 @@
     const { 
         Main,
         Declaration, 
-        Assignment,
+        ExpAssignment,
         VectorAssignment,
         DynamicList,
         Expression,
@@ -13,6 +13,7 @@
         FunctionBlock, 
         FunctionCall, 
         WriteLine, 
+        VectorPosition,
         ReturnValue } = require('../compiler/instruction')
 %}
 
@@ -207,18 +208,23 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION {
 INSTRUCTION : DECLARATION semicolom {
         $$ = $1;
     }
+    | ASSIGNMENT semicolom {
+        $$ = $1;
+    }
     | INCREMENTEXP semicolom {
         $$ = $1;
     }  
     | METHODS semicolom {
         $$ = $1;
     }
+    | FUNCTION {
+        $$ = $1;
+    }
     | breakRw semicolom
-| continueRw semicolom 
+    | continueRw semicolom 
     | returnRw EXPRESSIONS semicolom {
         $$ = new ReturnValue(getToken(@1), { content: $2 });
     }
-    | FUNCTION
 | CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
 
 MAIN : startRw withRw FUNCTIONCALL semicolom {
@@ -240,25 +246,30 @@ ASSIGNMENTS : ASSIGNMENTS comma ASSIGNMENT {
     };
 
 ASSIGNMENT : id {
-        $$ = new Assignment(getToken(@1), { id: $1 });
+        $$ = new ExpAssignment(getToken(@1), { id: $1 });
     }
     | id equals EXPRESSIONS {
-        $$ = new Assignment(getToken(@1), { id: $1, exp: $3 });  
+        $$ = new ExpAssignment(getToken(@1), { id: $1, exp: $3 });  
     }
     | id equals TERNARY {
-        $$ = new Assignment(getToken(@1), { id: $1 });
+        $$ = new ExpAssignment(getToken(@1), { id: $1, exp: $3 });
     }
-    | VECTORASSIGNMENT {
-        $$ = new Assignment(getToken(@1), { vector: $1 });
+    | NEWVECTORASSIGNMENT {
+        $$ = $1;
     }
     | DYNAMICLIST {
-        $$ = new Assignment(getToken(@1), { list: $1 });
+        $$ = $1;
     }
-    | VECTORVALUE equals EXPRESSIONS {
-        $$ = new Assignment(getToken(@1), { id: '' });
+    | VECTORASSIGNMENT {
+        $$ = $1;
     };
 
-VECTORASSIGNMENT : id openSquareBracket closeSquareBracket 
+VECTORASSIGNMENT : VECTORVALUE equals EXPRESSIONS {
+        $$ = new VectorPosition(getToken(@1), { 
+            value: $1, exp: $3 });
+    };
+
+NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket 
     equals newRw TYPE openSquareBracket integer closeSquareBracket {
         $$ = new VectorAssignment(getToken(@1), { type: $6, id: $1, size: $8 });
     }
@@ -298,13 +309,16 @@ VARVALUE : decimal {
         $$ = new Value(getToken(@1), { 
             value: '', type: DataType.ID, fromCall: $1 })
     }
+    | VECTORVALUE {
+        $$ = $1;
+    }
     | TOLOWER | TOUPPER | LENGTHSEQ
 | TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
-| GETVALUE | VECTORVALUE;
+| GETVALUE;
 
-VECTORVALUE : id openSquareBracket integer closeSquareBracket {
-        $$ = new VectorValue(getToken(@1), $3, { 
-            value: $1, type: DataType.STRING });
+VECTORVALUE : id openSquareBracket EXPRESSIONS closeSquareBracket {
+        $$ = new VectorValue(getToken(@1), { 
+            value: $1, index: $3, type: DataType.STRING });
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -380,13 +394,16 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS {
         $$ = new Expression(getToken(@1), { left: $4 } );
     }
     | openParenthesis TERNARY closeParenthesis {
-        $$ = new Expression(getToken(@1));
+        $$ = $2;
     }
     | VARVALUE {
         $$ = new Expression(getToken(@1), { value: $1 });
     };
 
-TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS;
+TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS {
+        $$ = new Expression(getToken(@1), { 
+            left: $3, right: $5, condition: $1, operator: Operator.TERNARY })
+    };
 
 INCREMENTEXP : id plusPlus {
         $$ = new Expression(getToken(@1), { 

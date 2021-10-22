@@ -1,6 +1,7 @@
 // TIPOS DE DATOS
 enum DataType {
 	ID = 'ID',
+	ARRAY = 'ARRAY',
 	STRING = 'STRING',
 	BOOLEAN = 'BOOLEAN',
 	INTEGER = 'INTEGER',
@@ -21,6 +22,7 @@ export enum Operator {
 	TIMES = '*',
 	MODULE = '%',
 	POWER = '^',
+	TERNARY = '?:',
 	EQUALSEQUALS = '==',
 	MOREOREQUALS = '>=',
 	MAJOR = '>',

@@ -16,7 +16,8 @@ const operateValues = (
 	token: TokenInfo,
 	left: Value,
 	operator: Operator,
-	right?: Value
+	right?: Value,
+	condition?: Value
 ): Value | undefined => {
 	// PROPIEDADES DE EXP IZQUIERDA
 	const lValue: DataValue | undefined = left.getValue(env)
@@ -25,6 +26,9 @@ const operateValues = (
 	// PROPIEDADES DE EXP DERECHA
 	const rValue: DataValue | undefined = right?.getValue(env)
 	const rType: DataType | undefined = right?.props.type
+
+	// PROPIEDADES DE CONDICION
+	const conditionValue: DataValue | undefined = condition?.getValue(env)
 
 	// RESULTADOS
 	let value: DataValue | undefined
@@ -410,6 +414,15 @@ const operateValues = (
 		case Operator.MINUSMINUS:
 			value = (lValue as number) - 1
 			type = lType
+			break
+		case Operator.TERNARY:
+			if (conditionValue && conditionValue !== undefined) {
+				value = lValue
+				type = lType
+			} else {
+				value = rValue
+				type = rType
+			}
 			break
 		default:
 			break

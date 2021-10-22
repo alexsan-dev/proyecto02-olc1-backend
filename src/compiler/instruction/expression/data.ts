@@ -13,7 +13,13 @@ class Expression extends Instruction {
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
-		public props: Partial<{ left: Expression; right: Expression; value: Value; operator: Operator }>
+		public props: Partial<{
+			value: Value
+			left: Expression
+			right: Expression
+			operator: Operator
+			condition?: Expression
+		}>
 	) {
 		super(token, 'Expression')
 		this.childToken = token
@@ -30,6 +36,7 @@ class Expression extends Instruction {
 		// OBTENER RESULTADOS ANTERIORES
 		const left: Value | undefined = this.props.left?.getValue(env)
 		const right: Value | undefined = this.props.right?.getValue(env)
+		const condition: Value | undefined = this.props.condition?.getValue(env)
 
 		// OPERAR
 		if (left) {
@@ -39,7 +46,8 @@ class Expression extends Instruction {
 					this.childToken,
 					left,
 					this.props.operator,
-					right
+					right,
+					condition
 				)
 				if (result) return result
 			} else return left

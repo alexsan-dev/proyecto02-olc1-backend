@@ -2,12 +2,12 @@
 import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
+import Assignment from './assignment'
 import { Value } from '../expression'
-import Instruction from '../models'
 import errors from '../../error'
 
 // ASIGNACIONES DE VECTORES
-class VectorAssignment extends Instruction {
+class VectorAssignment extends Assignment {
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
@@ -18,22 +18,28 @@ class VectorAssignment extends Instruction {
 			id: string
 		}
 	) {
-		super(token, 'VectorAssignment')
+		super(token, props.id)
 	}
 
 	// COMPILAR EXPRESIONES COMO VECTOR
-	public compile(env: Environment): boolean {
-		if (this.props.defValues) {
+	public compile(env: Environment, type: DataType): boolean {
+		// COMPILAR LOCAL
+		let compile = true
+		if (this.props.defValues?.length) {
 			const compiles = this.props.defValues.map((exp: Expression) => exp.compile(env))
-			return compiles.every((compile: boolean) => compile === true)
+			compile = compiles.every((compile: boolean) => compile === true)
 		} else {
 			if (this.props.size && this.props.size >= 0) return true
-			else return false
+			else compile = false
 		}
+
+		// COMPILAR PADRE
+		if (compile) compile = super.setValue(env, type, this.getValue(env, type))
+		return compile
 	}
 
 	// OBTENER VALOR
-	public getValue(env: Environment): Value | undefined {
+	public getValue(env: Environment, type: DataType): Value | undefined {
 		if (this.props.defValues) {
 			// OBTENER
 			const values: { value: DataValue; type: DataType }[] = this.props.defValues.map(
@@ -45,14 +51,15 @@ class VectorAssignment extends Instruction {
 
 			// VERIFICAR TIPO
 			if (values.every((value) => value.type === values[0].type)) {
-				if (values[0].type === this.props.type) {
+				if (values[0].type === type) {
 					const validValues: DataValue[] = values.map((value) => value.value)
-					return new Value(this.token, { value: validValues, type: this.props.type })
+					const newValue: Value = new Value(this.token, { value: validValues, type })
+					return newValue
 				} else
 					errors.push({
 						type: 'Semantic',
 						token: this.token,
-						msg: `No se puede asignar el tipo ${values[0].type} a ${this.props.type}`,
+						msg: `No se puede asignar el tipo ${values[0].type} a ${type}.`,
 					})
 			} else
 				errors.push({

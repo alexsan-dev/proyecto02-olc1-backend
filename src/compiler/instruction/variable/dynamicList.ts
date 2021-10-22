@@ -1,17 +1,18 @@
 import DataType, { TokenInfo } from '../../utils/types'
+import Environment from '../../runtime/environment'
+import Assignment from './assignment'
 import { Value } from '../expression'
-import Instruction from '../models'
 
 // ASIGNACIONES
-class DynamicList extends Instruction {
+class DynamicList extends Assignment {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, public props: { id: string; type: DataType }) {
-		super(token, 'DynamicList')
+		super(token, props.id)
 	}
 
 	// COMPILAR
-	public compile(): boolean {
-		return true
+	public compile(env: Environment, type: DataType): boolean {
+		return super.setValue(env, type, this.getValue())
 	}
 
 	// OBTENER VALOR
