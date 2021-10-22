@@ -70,7 +70,7 @@ class VectorAssignment extends Assignment {
 		} else if (this.props.size) {
 			return new Value(this.token, {
 				value: new Array(this.props.size).fill(undefined),
-				type: this.props.type || DataType.STRING,
+				type: this.props.type || DataType.ID,
 			})
 		} else
 			errors.push({

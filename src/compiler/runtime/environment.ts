@@ -22,7 +22,7 @@ class Environment {
 	}
 
 	// CONSTRUCTOR
-	constructor(private name: EnvironmentName, private prevEnv?: Environment) {
+	constructor(private name: EnvironmentName, private id: string, private prevEnv?: Environment) {
 		this.vars = {}
 		this.functions = {}
 	}
@@ -35,6 +35,11 @@ class Environment {
 	// OBTENER NOMBRE
 	public getName(): EnvironmentName {
 		return this.name
+	}
+
+	// OBTENER ID
+	public getID(): string {
+		return this.id
 	}
 
 	// AGREGAR VARIABLE

@@ -12,7 +12,9 @@ class ExpAssignment extends Assignment {
 
 	// COMPILAR
 	public compile(env: Environment, type: DataType): boolean {
-		return super.setValue(env, type, this.getValue(env))
+		const value: Value | undefined = env.getVar(this.props.id)
+		value?.compile(env)
+		return super.setValue(env, value?.getType() ?? type, this.getValue(env), type !== undefined)
 	}
 
 	// OBTENER VALOR

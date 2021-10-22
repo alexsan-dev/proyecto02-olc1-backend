@@ -7,12 +7,16 @@ import Instruction from '../models'
 
 // ASIGNACIONES
 class Value extends Instruction {
+	// GLOBALES
+	private refType: DataType
+
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
 		public props: { value: string | DataValue[]; type: DataType; fromCall?: FunctionCall }
 	) {
 		super(token, 'Value')
+		this.refType = this.props.type
 	}
 
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
@@ -27,11 +31,15 @@ class Value extends Instruction {
 		if (this.props.type === DataType.ID) {
 			if (env) {
 				const newValue: Value | undefined = env.getVar(this.props.value as string)
-				this.props.value = (newValue?.getValue(env) as string | DataType[]) ?? ''
-				this.props.type = newValue?.props.type || this.props.type
+				if (newValue?.compile(env)) this.refType = newValue?.getType()
 			}
-		}
+		} else this.refType = this.props.type
 		return true
+	}
+
+	// OBTENER TIPO DE RESULTADO
+	public getType(): DataType {
+		return this.refType
 	}
 
 	// OBTENER VALOR CAST
@@ -49,14 +57,15 @@ class Value extends Instruction {
 					case DataType.DOUBLE:
 						return parseFloat(strValue as string)
 					case DataType.BOOLEAN:
-						return (strValue as string).toLowerCase() === 'true'
+						if (typeof strValue === 'string') return (strValue as string).toLowerCase() === 'true'
+						else return strValue
 					case DataType.CHARACTER:
 						return (strValue as string).charAt(0)
 					case DataType.ID:
 						if (this.props.value) {
 							const newValue: Value | undefined = env.getVar(this.props.value as string)
-							if (newValue) {
-								this.props.type = newValue?.props.type
+							if (newValue?.compile(env)) {
+								this.refType = newValue.getType()
 								return newValue.getValue(env)
 							}
 						}

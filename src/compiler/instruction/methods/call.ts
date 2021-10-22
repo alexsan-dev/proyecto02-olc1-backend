@@ -41,49 +41,58 @@ class FunctionCall extends Instruction {
 		if (functionBlock) {
 			// OBTENER EXPRESIONES
 			functionBlock.setEnv(env)
-			const functionEnv: Environment = functionBlock.getEnv(env)
-			const values: { value: Value; type: DataType }[] = this.props.params.map(
-				(exp: Expression) => ({
-					value: exp.getValue(env),
-					type: exp.getValue(env)?.props.type,
-				})
-			) as { value: Value; type: DataType }[]
+			const functionEnv: Environment | undefined = functionBlock.getEnv()
+			if (functionEnv) {
+				const values: { value: Value; type: DataType }[] = this.props.params.map(
+					(exp: Expression) => ({
+						value: exp.getValue(env),
+						type: exp.getValue(env)?.getType(),
+					})
+				) as { value: Value; type: DataType }[]
 
-			// COMPILAR Y GUARDAR
-			if (this.props.params.map((exp) => exp.compile(functionEnv)).every((exp) => exp === true)) {
-				// VERIFICAR CANTIDAD DE PARAMETRO
-				if (functionBlock.props.params.length === this.props.params.length) {
-					// VERIFICAR TIPOS DE PARAMETROS
-					let compile = true
-					values.forEach((value, index: number) => {
-						if (value.type === functionBlock.props.params[index].type) {
-							// ASIGNAR VARIABLE A ENTORNO DE FUNCION
+				// COMPILAR Y GUARDAR
+				if (this.props.params.map((exp) => exp.compile(functionEnv)).every((exp) => exp === true)) {
+					// VERIFICAR CANTIDAD DE PARAMETRO
+					if (functionBlock.props.params.length === this.props.params.length) {
+						// VERIFICAR TIPOS DE PARAMETROS
+						let compile = true
+						values.forEach((value, index: number) => {
 							compile = value.value.compile(env)
-							if (compile)
-								functionEnv.addVar(functionBlock.props.params[index].id, value.type, value.value)
-						} else {
-							errors.push({
-								type: 'Semantic',
-								token: this.token,
-								msg: `Se esperaba un ${functionBlock.props.params[index].type} en el parametro ${
-									index + 1
-								} en la function ${this.props.id}`,
-							})
-							compile = false
-						}
-					})
 
-					compile = functionBlock.compile()
-					this.functionValue = functionBlock.getValue()
-					return compile
-				} else {
-					errors.push({
-						type: 'Semantic',
-						token: this.token,
-						msg: `Se esperaban ${functionBlock.props.params.length} parametros pero se obtuvieron ${this.props.params.length} en la funcion ${this.props.id}`,
-					})
-					return false
-				}
+							if (compile) {
+								if (value.type === functionBlock.props.params[index].type) {
+									// ASIGNAR VARIABLE A ENTORNO DE FUNCION
+									if (value.value.compile(env))
+										functionEnv.addVar(
+											functionBlock.props.params[index].id,
+											value.type,
+											value.value
+										)
+								} else {
+									errors.push({
+										type: 'Semantic',
+										token: this.token,
+										msg: `Se esperaba un ${
+											functionBlock.props.params[index].type
+										} en el parametro ${index + 1} en la function ${this.props.id}`,
+									})
+									compile = false
+								}
+							}
+						})
+
+						compile = functionBlock.compile()
+						this.functionValue = functionBlock.getValue()
+						return compile
+					} else {
+						errors.push({
+							type: 'Semantic',
+							token: this.token,
+							msg: `Se esperaban ${functionBlock.props.params.length} parametros pero se obtuvieron ${this.props.params.length} en la funcion ${this.props.id}`,
+						})
+						return false
+					}
+				} else return false
 			} else return false
 		} else {
 			errors.push({

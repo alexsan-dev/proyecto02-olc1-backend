@@ -7,6 +7,7 @@ import Value from './value'
 
 class VectorValue extends Value {
 	private index: number
+	private type: DataType
 
 	// CONSTRUCTOR
 	constructor(
@@ -15,6 +16,7 @@ class VectorValue extends Value {
 	) {
 		super(token, props)
 		this.index = -1
+		this.type = this.props.type
 	}
 
 	// OBTENER INDICE CALCULADO
@@ -22,15 +24,22 @@ class VectorValue extends Value {
 		return this.index
 	}
 
+	// OBTENER TIPO
+	public getType(): DataType {
+		return this.type
+	}
+
 	// COMPILAR
 	public compile(env: Environment): boolean {
 		let compile = true
+
+		// COMPILAR INDICE
 		if (this.props.index.compile()) {
 			// VERIFICAR TIPO DE DATO DE EXPRESION INDEX
 			const indexValue: Value | undefined = this.props.index.getValue(env)
 			const index: number | undefined = indexValue?.getValue(env) as number
 
-			if (index !== undefined && indexValue?.props.type === DataType.INTEGER) {
+			if (index !== undefined && indexValue?.getType() === DataType.INTEGER) {
 				this.index = index
 			} else {
 				compile = false
@@ -42,6 +51,13 @@ class VectorValue extends Value {
 			}
 		}
 
+		// COMPILAR VARIABLE
+		if (compile) {
+			const newValue: Value | undefined = env.getVar(this.props.value as string)
+			if (newValue?.compile(env)) this.type = newValue.getType()
+			else compile = false
+		}
+
 		// RETORNAR VALIDACION
 		return compile
 	}
@@ -51,8 +67,8 @@ class VectorValue extends Value {
 		if (env) {
 			if (this.props.value) {
 				const newValue: Value | undefined = env.getVar(this.props.value as string)
-				if (newValue) {
-					this.props.type = newValue?.props.type
+				if (newValue?.compile(env)) {
+					this.type = newValue?.getType()
 					const value = newValue.getValue(env) as DataValue[]
 
 					// VERIFICAR POSICION

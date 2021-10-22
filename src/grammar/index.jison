@@ -267,6 +267,9 @@ ASSIGNMENT : id {
 VECTORASSIGNMENT : VECTORVALUE equals EXPRESSIONS {
         $$ = new VectorPosition(getToken(@1), { 
             value: $1, exp: $3 });
+    } | VECTORVALUE equals TERNARY {
+        $$ = new VectorPosition(getToken(@1), { 
+            value: $1, exp: $3 });
     };
 
 NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket 

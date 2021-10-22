@@ -21,11 +21,11 @@ const operateValues = (
 ): Value | undefined => {
 	// PROPIEDADES DE EXP IZQUIERDA
 	const lValue: DataValue | undefined = left.getValue(env)
-	const lType: DataType | undefined = left.props.type
+	const lType: DataType | undefined = left.getType()
 
 	// PROPIEDADES DE EXP DERECHA
 	const rValue: DataValue | undefined = right?.getValue(env)
-	const rType: DataType | undefined = right?.props.type
+	const rType: DataType | undefined = right?.getType()
 
 	// PROPIEDADES DE CONDICION
 	const conditionValue: DataValue | undefined = condition?.getValue(env)
@@ -36,6 +36,7 @@ const operateValues = (
 
 	// OPERAR
 	switch (operator) {
+		//  OPERADORES ARITMETICOS
 		case Operator.PLUS:
 			switch (lType) {
 				case DataType.INTEGER:
@@ -407,6 +408,8 @@ const operateValues = (
 					break
 			}
 			break
+
+		// OPERADORES DE INCREMENTO
 		case Operator.PLUSPLUS:
 			value = (lValue as number) + 1
 			type = lType
@@ -415,6 +418,7 @@ const operateValues = (
 			value = (lValue as number) - 1
 			type = lType
 			break
+		// OPERADORES BOOLEANOS
 		case Operator.TERNARY:
 			if (conditionValue && conditionValue !== undefined) {
 				value = lValue
@@ -423,6 +427,30 @@ const operateValues = (
 				value = rValue
 				type = rType
 			}
+			break
+		case Operator.EQUALSEQUALS:
+			value = lValue === rValue
+			type = DataType.BOOLEAN
+			break
+		case Operator.NONEQUALS:
+			value = lValue !== rValue
+			type = DataType.BOOLEAN
+			break
+		case Operator.MOREOREQUALS:
+			value = (lValue as number) >= (rValue as number)
+			type = DataType.BOOLEAN
+			break
+		case Operator.LESSOREQUALS:
+			value = (lValue as number) <= (rValue as number)
+			type = DataType.BOOLEAN
+			break
+		case Operator.MAJOR:
+			value = (lValue as number) > (rValue as number)
+			type = DataType.BOOLEAN
+			break
+		case Operator.MINOR:
+			value = (lValue as number) < (rValue as number)
+			type = DataType.BOOLEAN
 			break
 		default:
 			break

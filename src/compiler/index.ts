@@ -7,7 +7,7 @@ import errors from './error'
 // COMPILAR APLICACION
 const compile = (instructions: Instruction[]) => {
 	// CREAR ENTORNO GLOBAL
-	const globalEnv = new Environment('Global')
+	const globalEnv = new Environment('Global', 'Global')
 
 	// COMPILAR TODO PRIMERO
 	instructions.forEach((instruction: Instruction) => {

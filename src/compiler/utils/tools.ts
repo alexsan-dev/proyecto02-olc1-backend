@@ -9,7 +9,7 @@ import type { JISONTokenInfo, TokenInfo } from './types'
  */
 const getToken = (jisonToken: JISONTokenInfo): TokenInfo => ({
 	line: jisonToken.first_line,
-	col: jisonToken.first_column,
+	col: jisonToken.first_column + 1,
 })
 
 export default getToken

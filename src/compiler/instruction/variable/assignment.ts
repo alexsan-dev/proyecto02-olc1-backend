@@ -13,18 +13,31 @@ class Assignment extends Instruction {
 	}
 
 	// GUARDAR VARIABLE EN ENTORNO
-	public setValue(env: Environment, type: DataType, value: Value | undefined): boolean {
+	public setValue(
+		env: Environment,
+		type: DataType,
+		value: Value | undefined,
+		isNew = true
+	): boolean {
 		if (this.id?.length) {
 			if (value?.compile(env)) {
-				if (type === value?.props.type) {
-					env.addVar(this.id, type, value)
+				if (type === value.getType()) {
+					if (isNew) env.addVar(this.id, type, value)
+					else env.setVar(this.id, value)
 					return true
 				} else {
-					errors.push({
-						type: 'Semantic',
-						token: this.token,
-						msg: `No se puede asignar el tipo ${value?.props.type} a ${type}`,
-					})
+					if (type) {
+						errors.push({
+							type: 'Semantic',
+							token: this.token,
+							msg: `No se puede asignar el tipo ${value.getType()} a ${type}.`,
+						})
+					} else
+						errors.push({
+							type: 'Semantic',
+							token: this.token,
+							msg: `Es posible que la variable ${this.id} no este declarada.`,
+						})
 					return false
 				}
 			} else return false

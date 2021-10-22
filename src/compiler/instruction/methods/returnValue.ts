@@ -30,8 +30,9 @@ class ReturnValue extends Instruction {
 			// ASIGNAR RETORNO A FUNCION
 			if (currentEnvironment) {
 				const value = this.props.content.getValue(env)
+
 				if (value?.compile(env)) {
-					currentEnvironment.addVar('return', value.props.type, value)
+					currentEnvironment.addVar('return', value.getType(), value)
 					return true
 				} else return false
 			} else return false

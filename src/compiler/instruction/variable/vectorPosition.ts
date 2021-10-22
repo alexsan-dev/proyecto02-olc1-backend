@@ -19,8 +19,13 @@ class VectorPosition extends Assignment {
 	}
 
 	// COMPILAR
-	public compile(env: Environment, type: DataType): boolean {
-		return this.setValue(env, type, this.getValue(env))
+	public compile(env: Environment): boolean {
+		if (this.id) {
+			const refValue: Value | undefined = env.getVar(this.id)
+			if (refValue?.compile(env)) {
+				return this.setValue(env, refValue.getType(), this.getValue(env))
+			} else return false
+		} else return false
 	}
 
 	// ASIGNAR VALOR
@@ -37,7 +42,7 @@ class VectorPosition extends Assignment {
 						// INDICE DE EXPRESION
 						const index: number = this.props.value.getIndex()
 						if (index >= 0 && index < temporal.length) {
-							if (refValue.props.type === value?.props.type) {
+							if (refValue.getType() === value?.getType()) {
 								// ASIGNAR NUEVO VALOR
 								const newValue = value?.getValue(env)
 								if (newValue && value?.compile(env)) temporal[index] = newValue
@@ -45,7 +50,7 @@ class VectorPosition extends Assignment {
 								errors.push({
 									type: 'Semantic',
 									token: this.token,
-									msg: `No se puede asignar el tipo ${value?.props.type} a ${refValue.props.type}`,
+									msg: `No se puede asignar el tipo ${value?.getType()} a ${refValue.getType()}`,
 								})
 						} else {
 							compile = false

@@ -31,7 +31,7 @@ class FunctionBlock extends Instruction {
 
 	// ASIGNAR ENTORNO
 	public setEnv(env: Environment): void {
-		this.env = new Environment('Function', env)
+		this.env = new Environment('Function', this.props.id, env)
 	}
 
 	// COMPILAR FUNCION
@@ -47,13 +47,15 @@ class FunctionBlock extends Instruction {
 		this.functionValue = this.env?.getVar('return')
 
 		if (this.props.type !== 'void') {
-			if (this.props.type === this.functionValue?.props.type) {
+			if (this.props.type === this.functionValue?.getType()) {
 				return compiles.every((result: boolean) => result === true)
 			} else {
 				errors.push({
 					type: 'Semantic',
 					token: this.token,
-					msg: `La funcion retorna un ${this.functionValue?.props.type} pero se esperaba un ${this.props.type}`,
+					msg: `La funcion retorna un ${this.functionValue?.getType()} pero se esperaba un ${
+						this.props.type
+					}`,
 				})
 				return false
 			}
@@ -61,8 +63,8 @@ class FunctionBlock extends Instruction {
 	}
 
 	// OBTENER ENTORNO DE FUNCION
-	public getEnv(env: Environment): Environment {
-		return this.env || new Environment('Function', env)
+	public getEnv(): Environment | undefined {
+		return this.env
 	}
 }
 
