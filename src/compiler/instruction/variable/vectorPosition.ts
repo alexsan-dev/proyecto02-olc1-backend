@@ -57,7 +57,7 @@ class VectorPosition extends Assignment {
 							errors.push({
 								type: 'Semantic',
 								token: this.token,
-								msg: `La posicion ${this.props.value.props.index} esta fuera de rango para el arreglo ${this.props.value.props.value}.`,
+								msg: `La posicion ${index} esta fuera de rango para el arreglo ${this.props.value.props.value}.`,
 							})
 						}
 					}
