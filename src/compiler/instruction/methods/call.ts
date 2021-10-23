@@ -1,5 +1,5 @@
-import { DataType, TokenInfo } from '../../utils'
 import Environment from '../../runtime/environment'
+import { DataType, TokenInfo } from '../../utils'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import FunctionBlock from './functions'

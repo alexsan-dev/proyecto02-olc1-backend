@@ -8,6 +8,7 @@ class FunctionBlock extends Instruction {
 	// GLOBALES
 	private env: Environment | undefined
 	private functionValue: Value | undefined
+	private isOnBreak = false
 
 	// CONSTRUCTOR
 	constructor(
@@ -32,6 +33,27 @@ class FunctionBlock extends Instruction {
 	// ASIGNAR ENTORNO
 	public setEnv(env: Environment): void {
 		this.env = new Environment('Function', this.props.id, env)
+		this.isOnBreak = false
+		this.functionValue = undefined
+		this.env.addFunction(
+			'return',
+			'void',
+			new FunctionBlock(this.token, {
+				id: 'return',
+				type: 'void',
+				content: [
+					{
+						token: this.token,
+						name: 'FunctionCall',
+						compile: () => {
+							this.isOnBreak = true
+							return true
+						},
+					},
+				],
+				params: [],
+			})
+		)
 	}
 
 	// COMPILAR FUNCION
@@ -40,11 +62,20 @@ class FunctionBlock extends Instruction {
 		this.props.params.forEach((param) => this.env?.addVar(param.id, param.type, undefined))
 
 		// COMPILAR CONTENIDO
-		const compiles: boolean[] = this.props.content.map((content: Instruction) =>
-			this.env ? content.compile(this.env) : false
-		)
+		const compiles: boolean[] = []
+		for (
+			let instructionIndex = 0, length = this.props.content.length;
+			instructionIndex < length;
+			instructionIndex++
+		) {
+			if (this.env) {
+				if (!this.isOnBreak) compiles.push(this.props.content[instructionIndex].compile(this.env))
+				else break
+			}
+		}
 
-		this.functionValue = this.env?.getVar('return')
+		// OBTENER VALOR DE RETORNO
+		if (this.env && 'getVar' in this.env) this.functionValue = this.env?.getVar('return')
 
 		if (this.props.type !== 'void') {
 			if (this.props.type === this.functionValue?.getType()) {

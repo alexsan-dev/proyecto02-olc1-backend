@@ -1,5 +1,5 @@
-import Environment from 'compiler/runtime/environment'
 import { TokenInfo } from '../../utils/types'
+import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import Instruction from '../models'
@@ -30,9 +30,20 @@ class ReturnValue extends Instruction {
 			// ASIGNAR RETORNO A FUNCION
 			if (currentEnvironment) {
 				const value = this.props.content.getValue(env)
-
 				if (value?.compile(env)) {
-					currentEnvironment.addVar('return', value.getType(), value)
+					// EVALUAR Y GUARDAR
+					currentEnvironment.addVar(
+						'return',
+						value.getType(),
+						new Value(this.token, {
+							value: (value.getValue(env) as string) ?? '',
+							type: value.getType(),
+						})
+					)
+
+					// EJECUTAR RETURN
+					const returnFunction = currentEnvironment.getFunction('return')
+					if (returnFunction) returnFunction.compile()
 					return true
 				} else return false
 			} else return false

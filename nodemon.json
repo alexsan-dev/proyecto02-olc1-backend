@@ -1,6 +1,6 @@
 {
 	"watch": ["src", "test"],
-	"ext": "ts,jison,txt",
+	"ext": "ts,jison,txt,java",
 	"ignore": ["*.test.ts"],
 	"execMap": {
 		"ts": "ts-node"

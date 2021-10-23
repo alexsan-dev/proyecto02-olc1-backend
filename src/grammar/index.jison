@@ -14,6 +14,7 @@
         FunctionCall, 
         WriteLine, 
         VectorPosition,
+        Condition,
         ReturnValue } = require('../compiler/instruction')
 %}
 
@@ -281,6 +282,7 @@ NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket
         $$ = new VectorAssignment(getToken(@1), { id: $1, defValues: $6 });
     };
 
+/* TODO: */
 DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
         $$ = new DynamicList(getToken(@1), { id: $1, type: $6 });
     };
@@ -393,6 +395,7 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS {
     | openParenthesis EXPRESSIONS closeParenthesis {
         $$ = new Expression(getToken(@1), { left: $2 });
     }
+/* TODO: Casteo explicito */
     | openParenthesis TYPE closeParenthesis EXPRESSIONS {
         $$ = new Expression(getToken(@1), { left: $4 } );
     }
@@ -431,75 +434,6 @@ EXPLIST : EXPLIST comma EXPRESSIONS {
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
-/* BUILT-IN FUNCTIONS */
-METHODS : APPEND | SETVALUE | FUNCTIONCALL 
-    | WRITELINE {
-        $$ = $1;
-    };
-
-APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
-
-GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis;
-
-SETVALUE : setValueRw openParenthesis 
-id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis;
-
-WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis {
-        $$ = new WriteLine(getToken(@1), { id:'writeLine', params: [$3] });
-    };
-
-TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;
-
-TOUPPER : toUpperRw openParenthesis EXPRESSIONS closeParenthesis;
-
-LENGTHSEQ : lengthRw openParenthesis VARVALUE closeParenthesis;
-
-TRUNCATE : truncateRw openParenthesis VARVALUE closeParenthesis;
-
-ROUND : roundRw openParenthesis VARVALUE closeParenthesis;
-
-TYPEOFSEQ : typeOfRw openParenthesis VARVALUE closeParenthesis;
-
-TOSTRINGSEQ : toStringRw openParenthesis VARVALUE closeParenthesis;
-
-TOCHARARRAY : toCharArrayRw openParenthesis VARVALUE closeParenthesis;
-
-/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
-/* SENTENCIAS DE CONTROL */
-CONTROLSEQ : CONSTROLSEQSYM openParenthesis EXPRESSIONS
-closeParenthesis BLOCKCONTENT
-| elseRw BLOCKCONTENT;
-
-CONSTROLSEQSYM : ifRw | elseRw ifRw;
-
-/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
-/* SWITCH */
-SWITCHSEQ : switchRw openParenthesis EXPRESSIONS closeParenthesis
-openBracket SWITCHSEQCASES closeBracket;
-
-SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT
-| SWITCHSEQCONTENT;
-
-SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS
-| defaultRw colom INSTRUCTIONS;
-
-/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
-/* CICLOS */
-LOOPSEQ : WHILESEQ | DOWHILESEQ | FORSEQ;
-
-WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT;
-
-DOWHILESEQ : doRw BLOCKCONTENT 
-whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom;
-
-FORSEQ : forRw openParenthesis FORSEQPARAMS closeParenthesis BLOCKCONTENT;
-
-FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
-| DECLARATION semicolom EXPRESSIONS semicolom INCREMENTEXP
-| LINEASSIGNMENT semicolom EXPRESSIONS semicolom EXPRESSIONS
-| LINEASSIGNMENT semicolom EXPRESSIONS semicolom INCREMENTEXP;
-
-/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* METODOS */
 PARAMSLIST : PARAMSLIST comma PARAMVAR {
         $$ = $1;
@@ -535,3 +469,107 @@ FUNCTIONCALL : id openParenthesis EXPLIST closeParenthesis {
     | id openParenthesis closeParenthesis {
         $$ = new FunctionCall(getToken(@1), { params: [], id: $1 })
     };
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* BUILT-IN FUNCTIONS */
+METHODS : APPEND | SETVALUE | FUNCTIONCALL 
+    | WRITELINE {
+        $$ = $1;
+    };
+
+APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
+
+GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis;
+
+SETVALUE : setValueRw openParenthesis 
+id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis;
+
+WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new WriteLine(getToken(@1), { id:'writeLine', params: [$3] });
+    };
+
+TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;
+
+TOUPPER : toUpperRw openParenthesis EXPRESSIONS closeParenthesis;
+
+LENGTHSEQ : lengthRw openParenthesis VARVALUE closeParenthesis;
+
+TRUNCATE : truncateRw openParenthesis VARVALUE closeParenthesis;
+
+ROUND : roundRw openParenthesis VARVALUE closeParenthesis;
+
+TYPEOFSEQ : typeOfRw openParenthesis VARVALUE closeParenthesis;
+
+TOSTRINGSEQ : toStringRw openParenthesis VARVALUE closeParenthesis;
+
+TOCHARARRAY : toCharArrayRw openParenthesis VARVALUE closeParenthesis;
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* SENTENCIAS DE CONTROL */
+CONTROLSEQ : ifRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
+        $$ = new Condition(getToken(@1), { 
+            valid: { exp: $3, body: $5 }
+        })
+    }
+    | ifRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT
+    elseRw BLOCKCONTENT {
+        $$ = new Condition(getToken(@1), { 
+            valid: { exp: $3, body: $5 },
+            inValid: { exp: $3, body: $7 }
+        })
+    }
+    | ifRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT
+    CONTROLSEQELIFS {
+        $$ = new Condition(getToken(@1), { 
+            valid: { exp: $3, body: $5 },
+            fallback: $6
+        })
+    }
+    | ifRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT
+    CONTROLSEQELIFS elseRw BLOCKCONTENT {
+        $$ = new Condition(getToken(@1), { 
+            inValid: { exp: $3, body: $8 },
+            valid: { exp: $3, body: $5 },
+            fallback: $6
+        })
+    };
+
+CONTROLSEQELIFS : CONTROLSEQELIFS CONTROLSEQELIF {
+        $$ = $1;
+        $$.push($2);
+    }
+    | CONTROLSEQELIF {
+        $$ = [$1];
+    };
+
+CONTROLSEQELIF : elseRw ifRw 
+openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
+        $$ = { exp: $4, body: $6 };
+    };
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* SWITCH */
+SWITCHSEQ : switchRw openParenthesis EXPRESSIONS closeParenthesis
+openBracket SWITCHSEQCASES closeBracket;
+
+SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT
+| SWITCHSEQCONTENT;
+
+SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS
+| defaultRw colom INSTRUCTIONS;
+
+/*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
+/* CICLOS */
+LOOPSEQ : WHILESEQ | DOWHILESEQ | FORSEQ;
+
+WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT;
+
+DOWHILESEQ : doRw BLOCKCONTENT 
+whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom;
+
+FORSEQ : forRw openParenthesis FORSEQPARAMS closeParenthesis BLOCKCONTENT;
+
+FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
+| DECLARATION semicolom EXPRESSIONS semicolom INCREMENTEXP
+| LINEASSIGNMENT semicolom EXPRESSIONS semicolom EXPRESSIONS
+| LINEASSIGNMENT semicolom EXPRESSIONS semicolom INCREMENTEXP;

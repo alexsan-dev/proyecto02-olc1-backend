@@ -5,14 +5,13 @@ import { TokenInfo } from 'compiler/utils/types'
 export type InstructionName =
 	| 'Declaration'
 	| 'Assignment'
-	| 'VectorAssignment'
-	| 'DynamicList'
 	| 'Expression'
 	| 'Value'
 	| 'Function'
 	| 'FunctionCall'
 	| 'Main'
 	| 'Return'
+	| 'Condition'
 
 abstract class Instruction {
 	// CONSTRUCTOR

@@ -20,7 +20,7 @@ const compile = (instructions: Instruction[]) => {
 			declaration.props.assignments.forEach((assignment: Assignment) => {
 				assignment.compile(globalEnv, declaration.props.type)
 			})
-		} else if (instruction.name === 'Assignment' || instruction.name === 'VectorAssignment') {
+		} else if (instruction.name === 'Assignment') {
 			instruction.compile(globalEnv)
 		} else if (instruction.name === 'Expression') {
 			if (

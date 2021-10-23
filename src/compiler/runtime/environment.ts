@@ -4,7 +4,7 @@ import { Value } from '../instruction/expression'
 import { DataType, TokenInfo } from '../utils'
 import errors from '../error'
 
-type EnvironmentName = 'Function' | 'Main' | 'Global'
+type EnvironmentName = 'Function' | 'Main' | 'Global' | 'Condition'
 class Environment {
 	// GLOBALES
 	private vars: {
@@ -70,10 +70,15 @@ class Environment {
 		return value
 	}
 
+	// OBTENER FUNCION
+	public getFunction(id: string): FunctionBlock | undefined {
+		return this.functions[id]?.value ?? this.prevEnv?.getFunction(id)
+	}
+
 	// AGREGAR FUNCION
 	public addFunction(id: string, type: DataType | 'void', value: FunctionBlock): void {
 		// NO EXISTE
-		if (this.getFunction(id) === undefined) {
+		if (this.functions[id] === undefined) {
 			this.functions[id] = { value, type }
 		} else
 			errors.push({
@@ -81,11 +86,6 @@ class Environment {
 				token: this.getVar(id)?.token || ({} as TokenInfo),
 				msg: `La funcion ${id} ya se ha declarado anteriormente.`,
 			})
-	}
-
-	// OBTENER FUNCION
-	public getFunction(id: string): FunctionBlock | undefined {
-		return this.functions[id]?.value || this.prevEnv?.getFunction(id)
 	}
 }
 

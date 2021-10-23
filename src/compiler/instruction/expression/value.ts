@@ -22,9 +22,12 @@ class Value extends Instruction {
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
 	public compile(env: Environment): boolean {
 		// CONVERTIR FUNCION A VALOR
-		if (this.props.fromCall?.compile(env)) {
-			const valueCall = this.props.fromCall.getValue()
-			if (valueCall?.props) this.props = valueCall?.props
+		if (this.props.fromCall) {
+			const valueCall = this.props.fromCall?.getValue()
+			if (valueCall?.props) {
+				this.props = valueCall?.props
+				this.refType = valueCall.refType
+			}
 		}
 
 		// COMPILAR VALOR
@@ -34,6 +37,7 @@ class Value extends Instruction {
 				if (newValue?.compile(env)) this.refType = newValue?.getType()
 			}
 		} else this.refType = this.props.type
+
 		return true
 	}
 
@@ -53,7 +57,8 @@ class Value extends Instruction {
 					case DataType.STRING:
 						return strValue
 					case DataType.INTEGER:
-						return parseInt(strValue as string)
+						if (typeof strValue === 'string') return parseInt(strValue as string)
+						else return strValue
 					case DataType.DOUBLE:
 						return parseFloat(strValue as string)
 					case DataType.BOOLEAN:

@@ -6,9 +6,10 @@ import fs from 'fs'
 
 // INICIAR PARSER
 try {
-	const input: Buffer = fs.readFileSync('./test/input.txt')
+	const input: Buffer = fs.readFileSync('./test/input2.java')
 	const instructions = parser.parse(input.toString())
 	compile(instructions)
+
 	if (errors.length) console.log('Errores: ' + JSON.stringify(errors, null, 2))
 } catch (err) {
 	console.error(err)
