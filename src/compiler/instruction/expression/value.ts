@@ -13,7 +13,7 @@ class Value extends Instruction {
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
-		public props: { value: string | DataValue[]; type: DataType; fromCall?: FunctionCall }
+		public props: { value: DataValue; type: DataType; fromCall?: FunctionCall }
 	) {
 		super(token, 'Value')
 		this.refType = this.props.type
@@ -22,11 +22,12 @@ class Value extends Instruction {
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
 	public compile(env: Environment): boolean {
 		// CONVERTIR FUNCION A VALOR
-		if (this.props.fromCall) {
+		if (this.props.fromCall?.compile(env)) {
 			const valueCall = this.props.fromCall?.getValue()
-			if (valueCall?.props) {
+
+			if (valueCall?.compile(env)) {
 				this.props = valueCall?.props
-				this.refType = valueCall.refType
+				this.refType = valueCall.getType()
 			}
 		}
 
@@ -49,23 +50,23 @@ class Value extends Instruction {
 	// OBTENER VALOR CAST
 	public getValue(env: Environment): DataValue | undefined {
 		if (env) {
-			const strValue: string | DataValue[] = this.props.value
-
 			// CAST TIPO
-			if (typeof strValue !== 'object') {
+			if (typeof this.props.value !== 'object') {
 				switch (this.props.type) {
 					case DataType.STRING:
-						return strValue
+						return this.props.value
 					case DataType.INTEGER:
-						if (typeof strValue === 'string') return parseInt(strValue as string)
-						else return strValue
+						if (typeof this.props.value === 'string') return parseInt(this.props.value as string)
+						else return this.props.value
 					case DataType.DOUBLE:
-						return parseFloat(strValue as string)
+						if (typeof this.props.value === 'string') return parseFloat(this.props.value as string)
+						else return this.props.value
 					case DataType.BOOLEAN:
-						if (typeof strValue === 'string') return (strValue as string).toLowerCase() === 'true'
-						else return strValue
+						if (typeof this.props.value === 'string')
+							return (this.props.value as string).toLowerCase() === 'true'
+						else return this.props.value
 					case DataType.CHARACTER:
-						return (strValue as string).charAt(0)
+						return (this.props.value as string).charAt(0)
 					case DataType.ID:
 						if (this.props.value) {
 							const newValue: Value | undefined = env.getVar(this.props.value as string)
@@ -76,9 +77,9 @@ class Value extends Instruction {
 						}
 						break
 					default:
-						return strValue
+						return this.props.value
 				}
-			} else return strValue
+			} else return this.props.value
 		}
 	}
 }

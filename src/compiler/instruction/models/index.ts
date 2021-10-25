@@ -12,6 +12,9 @@ export type InstructionName =
 	| 'Main'
 	| 'Return'
 	| 'Condition'
+	| 'Loop'
+	| 'Break'
+	| 'Continue'
 
 abstract class Instruction {
 	// CONSTRUCTOR

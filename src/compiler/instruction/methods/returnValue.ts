@@ -1,5 +1,5 @@
-import { TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
+import { TokenInfo } from '../../utils/types'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import Instruction from '../models'
@@ -18,7 +18,10 @@ class ReturnValue extends Instruction {
 
 			// RECURSIVA
 			const searchEnvironment = () => {
-				if (currentEnvironment?.getName() !== 'Function') {
+				if (
+					currentEnvironment?.getName() !== 'Function' &&
+					currentEnvironment?.getName() !== 'Loop'
+				) {
 					if (currentEnvironment?.getPrevEnv()) {
 						currentEnvironment = currentEnvironment?.getPrevEnv()
 						searchEnvironment()

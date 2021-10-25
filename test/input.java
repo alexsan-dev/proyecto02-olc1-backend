@@ -19,25 +19,24 @@ void init() {
   setHello();
   writeLine("Calculos: " + num);
   writeLine("Nuevo valor: " + hello);
-  int count = 5;
+ 
+  for(int count =0; count < 5; count++){
+    if(count == 2) {
+      continue;
+    } 
 
-  if(count == 0){
-    writeLine("en if");
-  } 
-  else if (count == 1){
-    writeLine("en else if 1");
+    writeLine("Contador for: " + count);
   }
-   else if(count == 2) {
-    writeLine("en else if 2");
-  }
-  else {
-    if( count == 3) {
-    writeLine("en else - if");
-    } else if (count == 4 ){
-      writeLine("en else - else if 1");
-    } else {
-      writeLine("en else - else ");
+
+  int count = -1;
+  while(count < 4) {
+    count++;
+
+    if(count == 2) {
+      continue;
     }
+
+    writeLine("Contador while: " + count);
   }
 }
 

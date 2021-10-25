@@ -1,7 +1,6 @@
-import { Assignment, Declaration, Expression, FunctionBlock } from './instruction'
 import Environment from './runtime/environment'
 import Instruction from './instruction/models'
-import { Operator } from './utils'
+import { FunctionBlock } from './instruction'
 import errors from './error'
 
 // COMPILAR APLICACION
@@ -16,19 +15,15 @@ const compile = (instructions: Instruction[]) => {
 			const functionBlock = instruction as FunctionBlock
 			globalEnv.addFunction(functionBlock.props.id, functionBlock.props.type, functionBlock)
 		} else if (instruction.name === 'Declaration') {
-			const declaration = instruction as Declaration
-			declaration.props.assignments.forEach((assignment: Assignment) => {
-				assignment.compile(globalEnv, declaration.props.type)
-			})
+			instruction.compile(globalEnv)
 		} else if (instruction.name === 'Assignment') {
 			instruction.compile(globalEnv)
-		} else if (instruction.name === 'Expression') {
-			if (
-				(instruction as Expression).props.operator === Operator.PLUSPLUS ||
-				(instruction as Expression).props.operator === Operator.MINUSMINUS
-			) {
-				instruction.compile(globalEnv)
-			}
+		} else if (instruction.name === 'FunctionCall') {
+			instruction.compile(globalEnv)
+		} else if (instruction.name === 'Condition') {
+			instruction.compile(globalEnv)
+		} else if (instruction.name === 'Loop') {
+			instruction.compile(globalEnv)
 		}
 	})
 

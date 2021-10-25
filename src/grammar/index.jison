@@ -1,21 +1,26 @@
 %{
-    const errors = require('../compiler/error')
     const { DataType, getToken, Operator } = require('../compiler/utils')
+    const errors = require('../compiler/error')
     const { 
-        Main,
-        Declaration, 
-        ExpAssignment,
+        IncrementalAssignment,
         VectorAssignment,
-        DynamicList,
-        Expression,
-        Value,
-        VectorValue,
-        FunctionBlock, 
-        FunctionCall, 
-        WriteLine, 
         VectorPosition,
+        FunctionBlock, 
+        ExpAssignment,
+        ContinueValue,
+        FunctionCall, 
+        CycleControl,
+        Declaration, 
+        VectorValue,
+        DynamicList,
+        ReturnValue,
+        Expression,
+        WriteLine, 
         Condition,
-        ReturnValue } = require('../compiler/instruction')
+	    BreakValue,
+        ForLoop,
+        Value,
+        Main } = require('../compiler/instruction')
 %}
 
 %lex
@@ -43,8 +48,8 @@
 "<="                        return 'lessOrEquals'
 ">="                        return 'moreOrEquals'
 "=="                        return 'equalsEquals'
-"!="                        return 'nonEquals'
 "--"                        return 'minusMinus'
+"!="                        return 'nonEquals'
 "++"                        return 'plusPlus'
 
 "?"                         return 'questionMark'
@@ -79,30 +84,30 @@
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* PALABRAS RESERVADAS */
-"new"                       return 'newRw';
+'toCharArray'               return 'toCharArrayRw'
 "DynamicList"               return 'dynamicListRw'
-"append"                    return 'appendRw'
-"getValue"                  return 'getValueRw'
-"setValue"                  return 'setValueRw'
 'writeLine'                 return 'writeLineRw'
+"setValue"                  return 'setValueRw'
+"getValue"                  return 'getValueRw'
+'truncate'                  return 'truncateRw'
+'toString'                  return 'toStringRw'
 'toLower'                   return 'toLowerRw'
 'toUpper'                   return 'toUpperRw'
+"append"                    return 'appendRw'
 'length'                    return 'lengthRw'
-'truncate'                  return 'truncateRw'
-'round'                     return 'roundRw'
 'typeOf'                    return 'typeOfRw'
-'toString'                  return 'toStringRw'
-'toCharArray'               return 'toCharArrayRw'
+'round'                     return 'roundRw'
 'start'                     return 'startRw'
 'with'                      return 'withRw'
+"new"                       return 'newRw';
 
-'if'                        return 'ifRw'
 'else'                      return 'elseRw'
+'if'                        return 'ifRw'
 
+'default'                   return 'defaultRw'
 'switch'                    return 'switchRw'
 'break'                     return 'breakRw'
 'case'                      return 'caseRw'
-'default'                   return 'defaultRw'
 
 'while'                     return 'whileRw'
 'for'                       return 'forRw'
@@ -130,7 +135,7 @@ NULLCHAR "\\0"
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
 
 <<EOF>>				        return 'EOF'
-.					        { errors.push({
+.					        { errors.default.push({
                                 type: 'Lexical',
                                 token: { line: yylloc.first_line, col: yylloc.fist_column },
                                 msg: `${yytext} no reconocido`
@@ -212,25 +217,26 @@ INSTRUCTION : DECLARATION semicolom {
     | ASSIGNMENT semicolom {
         $$ = $1;
     }
-    | INCREMENTEXP semicolom {
-        $$ = $1;
-    }  
     | METHODS semicolom {
         $$ = $1;
     }
     | FUNCTION {
         $$ = $1;
     }
-    | breakRw semicolom
-    | continueRw semicolom 
-    | returnRw EXPRESSIONS semicolom {
-        $$ = new ReturnValue(getToken(@1), { content: $2 });
+    | CONTROLSEQ {
+        $$ = $1;
     }
-| CONTROLSEQ | SWITCHSEQ | LOOPSEQ;
+    | LOOPSEQ {
+        $$ = $1;    
+    }
+    | SWITCHSEQ
+    | LOOPESCAPE {
+        $$ = $1;
+    };
 
 MAIN : startRw withRw FUNCTIONCALL semicolom {
         $$ = new Main(getToken(@1), $3);
-};
+    };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* DECLARACION DE VARIABLES */
@@ -255,14 +261,26 @@ ASSIGNMENT : id {
     | id equals TERNARY {
         $$ = new ExpAssignment(getToken(@1), { id: $1, exp: $3 });
     }
-    | NEWVECTORASSIGNMENT {
+    | INCREMENTALASSIGNMENT {
         $$ = $1;
     }
-    | DYNAMICLIST {
+    | NEWVECTORASSIGNMENT {
         $$ = $1;
     }
     | VECTORASSIGNMENT {
         $$ = $1;
+    }
+    | DYNAMICLIST {
+        $$ = $1;
+    };
+
+INCREMENTALASSIGNMENT : id plusPlus {
+        $$ = new IncrementalAssignment(getToken(@1), { 
+            id: $1, operator: Operator.PLUSPLUS })
+    }
+    | id minusMinus {
+        $$ = new IncrementalAssignment(getToken(@1), { 
+            id: $1, operator: Operator.MINUSMINUS })
     };
 
 VECTORASSIGNMENT : VECTORVALUE equals EXPRESSIONS {
@@ -399,30 +417,16 @@ EXPRESSIONS : EXPRESSIONS plus EXPRESSIONS {
     | openParenthesis TYPE closeParenthesis EXPRESSIONS {
         $$ = new Expression(getToken(@1), { left: $4 } );
     }
-    | openParenthesis TERNARY closeParenthesis {
-        $$ = $2;
-    }
     | VARVALUE {
         $$ = new Expression(getToken(@1), { value: $1 });
+    }
+    | openParenthesis TERNARY closeParenthesis {
+        $$ = $2;
     };
 
 TERNARY : EXPRESSIONS questionMark EXPRESSIONS colom EXPRESSIONS {
         $$ = new Expression(getToken(@1), { 
             left: $3, right: $5, condition: $1, operator: Operator.TERNARY })
-    };
-
-INCREMENTEXP : id plusPlus {
-        $$ = new Expression(getToken(@1), { 
-            left: new Value(getToken(@1), { 
-                value: $1, type: DataType.ID }),
-            operator: Operator.PLUSPLUS
-    })}
-    | id minusMinus {
-        $$ = new Expression(getToken(@1), { 
-            left: new Value(getToken(@1), { 
-                value: $1, type: DataType.ID }),
-            operator: Operator.MINUSMINUS
-        })   
     };
 
 EXPLIST : EXPLIST comma EXPRESSIONS {
@@ -562,14 +566,37 @@ SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS
 /* CICLOS */
 LOOPSEQ : WHILESEQ | DOWHILESEQ | FORSEQ;
 
-WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT;
+WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
+        $$ = new CycleControl(getToken(@1), { 
+            condition: $3, body: $5 
+         })
+    };
 
 DOWHILESEQ : doRw BLOCKCONTENT 
-whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom;
+whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom {
+        $$ = new CycleControl(getToken(@1), { 
+            condition: $5, body: $2, isDoLoop: true
+         })
+    };
 
-FORSEQ : forRw openParenthesis FORSEQPARAMS closeParenthesis BLOCKCONTENT;
+FORSEQ : forRw openParenthesis FORSEQPARAMS closeParenthesis BLOCKCONTENT {
+        $$ = new ForLoop(getToken(@1), { ...$3, body: $5 })
+    };
 
-FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom EXPRESSIONS
-| DECLARATION semicolom EXPRESSIONS semicolom INCREMENTEXP
-| LINEASSIGNMENT semicolom EXPRESSIONS semicolom EXPRESSIONS
-| LINEASSIGNMENT semicolom EXPRESSIONS semicolom INCREMENTEXP;
+FORSEQPARAMS : DECLARATION semicolom EXPRESSIONS semicolom ASSIGNMENT {
+        $$ = { withDeclarations: true, 
+        assignments: [$1], condition: $3, modifiers: $5 }
+    }
+    | ASSIGNMENTS semicolom EXPRESSIONS semicolom ASSIGNMENT {
+        $$ = { assignments: $1, condition: $3, modifiers: $5 }
+    };
+
+LOOPESCAPE : breakRw semicolom {
+        $$ = new BreakValue(getToken(@1))
+    }
+    | continueRw semicolom {
+        $$ = new ContinueValue(getToken(@1))
+    }
+    | returnRw EXPRESSIONS semicolom {
+        $$ = new ReturnValue(getToken(@1), { content: $2 });
+    };

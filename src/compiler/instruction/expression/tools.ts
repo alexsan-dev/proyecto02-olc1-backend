@@ -276,7 +276,7 @@ const operateValues = (
 					switch (rType) {
 						case DataType.INTEGER:
 							value = (lValue as number) / (rValue as number)
-							type = DataType.INTEGER
+							type = DataType.DOUBLE
 							break
 						case DataType.DOUBLE:
 							value = (lValue as number) / (rValue as number)
@@ -284,7 +284,7 @@ const operateValues = (
 							break
 						case DataType.CHARACTER:
 							value = (lValue as number) / (rValue as string).charCodeAt(0)
-							type = DataType.INTEGER
+							type = DataType.DOUBLE
 							break
 						default:
 							break
@@ -409,16 +409,15 @@ const operateValues = (
 			}
 			break
 
-		// OPERADORES DE INCREMENTO
-		case Operator.PLUSPLUS:
-			value = (lValue as number) + 1
-			type = lType
-			break
-		case Operator.MINUSMINUS:
-			value = (lValue as number) - 1
-			type = lType
-			break
 		// OPERADORES BOOLEANOS
+		case Operator.OR:
+			value = (lValue as boolean) || (rValue as boolean)
+			type = DataType.BOOLEAN
+			break
+		case Operator.AND:
+			value = (lValue as boolean) || (rValue as boolean)
+			type = DataType.BOOLEAN
+			break
 		case Operator.TERNARY:
 			if (conditionValue && conditionValue !== undefined) {
 				value = lValue
@@ -465,6 +464,31 @@ const operateValues = (
 			msg: `No es posible operar la expresion ${lType} ${operator} ${rType}.`,
 			token,
 		})
+}
+
+/**
+ * Valores por defecto
+ * @description Retorna un valor por defecto para cada tipo de dato
+ * @param type
+ * @returns
+ */
+export const defaultValues = (type: DataType): DataValue => {
+	switch (type) {
+		case DataType.INTEGER:
+			return 0
+		case DataType.DOUBLE:
+			return 0
+		case DataType.STRING:
+			return ''
+		case DataType.BOOLEAN:
+			return true
+		case DataType.CHARACTER:
+			return '0'
+		case DataType.ARRAY:
+			return []
+		default:
+			return ''
+	}
 }
 
 export default operateValues

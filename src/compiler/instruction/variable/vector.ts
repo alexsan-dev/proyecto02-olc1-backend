@@ -42,12 +42,17 @@ class VectorAssignment extends Assignment {
 	public getValue(env: Environment, type: DataType): Value | undefined {
 		if (this.props.defValues) {
 			// OBTENER
-			const values: { value: DataValue; type: DataType }[] = this.props.defValues.map(
-				(exp: Expression) => ({
-					value: exp.getValue(env)?.getValue(env),
-					type: exp.getValue(env)?.props.type,
+			const values: { value: DataValue; type: DataType }[] = this.props.defValues
+				.map((exp: Expression) => {
+					const value = exp.getValue(env)
+					if (value?.compile(env)) {
+						return {
+							value: value?.getValue(env),
+							type: value?.getType(),
+						}
+					}
 				})
-			) as { value: DataValue; type: DataType }[]
+				.filter(Boolean) as { value: DataValue; type: DataType }[]
 
 			// VERIFICAR TIPO
 			if (values.every((value) => value.type === values[0].type)) {
