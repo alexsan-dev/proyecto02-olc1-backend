@@ -115,7 +115,7 @@ case 6:
 break;
 case 7:
 
-        this.$ = DataType.DYNAMICLIST
+        this.$ = `${DataType.DYNAMICLIST}<${$$[$0-1]}>`
     
 break;
 case 8: case 12: case 13: case 14: case 76: case 83:
@@ -238,10 +238,10 @@ case 43: case 44:
         this.$ = new Value(getToken(_$[$0]), { value: $$[$0], type: DataType.BOOLEAN })
     
 break;
-case 45:
+case 45: case 55:
 
         this.$ = new Value(getToken(_$[$0]), { 
-            value: '', type: DataType.ID, fromCall: $$[$0] })
+            value: '', type: '', fromCall: $$[$0] })
     
 break;
 case 56:
@@ -399,9 +399,24 @@ case 88:
         this.$ = new FunctionCall(getToken(_$[$0-2]), { params: [], id: $$[$0-2] })
     
 break;
+case 93:
+   
+        this.$ = new Append(getToken(_$[$0-5]), { id: $$[$0-3], params: [$$[$0-1]] });
+    
+break;
+case 94:
+
+        this.$ = new GetValue(getToken(_$[$0-5]), { id: $$[$0-3], params: [$$[$0-1]] });
+    
+break;
+case 95:
+
+        this.$ = new SetValue(getToken(_$[$0-7]), { id: $$[$0-5], params: [$$[$0-3], $$[$0-1]] });
+    
+break;
 case 96:
 
-        this.$ = new WriteLine(getToken(_$[$0-3]), { id:'writeLine', params: [$$[$0-1]] });
+        this.$ = new WriteLine(getToken(_$[$0-3]), { params: [$$[$0-1]] });
     
 break;
 case 105:
@@ -678,8 +693,11 @@ parse: function parse(input) {
         WriteLine, 
         Condition,
 	    BreakValue,
+        GetValue,
+        SetValue,
         ForLoop,
         Switch,
+        Append,
         Value,
         Main } = require('../compiler/instruction')
 

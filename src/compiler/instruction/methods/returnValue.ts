@@ -40,8 +40,9 @@ class ReturnValue extends Instruction {
 						'return',
 						value.getType(),
 						new Value(this.token, {
-							value: (value.getValue(env) as string) ?? '',
+							value: value.getValue(env) as string,
 							type: value.getType(),
+							refType: value.getType(),
 						})
 					)
 

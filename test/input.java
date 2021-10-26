@@ -59,6 +59,12 @@ void init() {
       break;
   }
 
+  DynamicList<int> list = new DynamicList<int>;
+  append(list, 3);
+  append(list, 4);
+  append(list, 5);
+  setValue(list, 0, 2);
+  writeLine(getValue(list, 0));
 }
 
 

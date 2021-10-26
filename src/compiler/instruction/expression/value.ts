@@ -13,10 +13,10 @@ class Value extends Instruction {
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
-		public props: { value: DataValue; type: DataType; fromCall?: FunctionCall }
+		public props: { value: DataValue; type: DataType; refType?: DataType; fromCall?: FunctionCall }
 	) {
 		super(token, 'Value')
-		this.refType = this.props.type
+		this.refType = props.refType ?? this.props.type
 	}
 
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
@@ -37,7 +37,7 @@ class Value extends Instruction {
 				const newValue: Value | undefined = env.getVar(this.props.value as string)
 				if (newValue?.compile(env)) this.refType = newValue?.getType()
 			}
-		} else this.refType = this.props.type
+		}
 
 		return true
 	}

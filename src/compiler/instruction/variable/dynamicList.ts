@@ -2,6 +2,7 @@ import DataType, { TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import Assignment from './assignment'
 import { Value } from '../expression'
+import errors from '../../error'
 
 // ASIGNACIONES
 class DynamicList extends Assignment {
@@ -12,12 +13,27 @@ class DynamicList extends Assignment {
 
 	// COMPILAR
 	public compile(env: Environment, type: DataType): boolean {
-		return super.setValue(env, type, this.getValue())
+		// VERIFICAR TIPOS
+		if (type === `${DataType.DYNAMICLIST}<${this.props.type}>`) {
+			env.addVar(this.props.id, type, this.getValue())
+			return true
+		} else {
+			errors.push({
+				token: this.token,
+				type: 'Semantic',
+				msg: `No se puede asignar el tipo ${this.props.type} a ${type}.`,
+			})
+			return false
+		}
 	}
 
 	// OBTENER VALOR
 	public getValue(): Value {
-		return new Value(this.token, { value: [], type: DataType.DYNAMICLIST })
+		return new Value(this.token, {
+			value: [],
+			refType: this.props.type,
+			type: DataType.DYNAMICLIST,
+		})
 	}
 }
 

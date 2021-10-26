@@ -18,8 +18,11 @@
         WriteLine, 
         Condition,
 	    BreakValue,
+        GetValue,
+        SetValue,
         ForLoop,
         Switch,
+        Append,
         Value,
         Main } = require('../compiler/instruction')
 %}
@@ -191,7 +194,7 @@ TYPE :
         $$ = DataType.STRING; 
     }
     | dynamicListRw minor TYPE major {
-        $$ = DataType.DYNAMICLIST
+        $$ = `${DataType.DYNAMICLIST}<${$3}>`
     };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -303,7 +306,6 @@ NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket
         $$ = new VectorAssignment(getToken(@1), { id: $1, defValues: $6 });
     };
 
-/* TODO: */
 DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
         $$ = new DynamicList(getToken(@1), { id: $1, type: $6 });
     };
@@ -333,14 +335,17 @@ VARVALUE : decimal {
     }
     | FUNCTIONCALL {
         $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.ID, fromCall: $1 })
+            value: '', type: '', fromCall: $1 })
     }
     | VECTORVALUE {
         $$ = $1;
     }
     | TOLOWER | TOUPPER | LENGTHSEQ
 | TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
-| GETVALUE;
+    |  GETVALUE {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: '', fromCall: $1 })
+    };
 
 VECTORVALUE : id openSquareBracket EXPRESSIONS closeSquareBracket {
         $$ = new VectorValue(getToken(@1), { 
@@ -484,15 +489,21 @@ METHODS : APPEND | SETVALUE | FUNCTIONCALL
         $$ = $1;
     };
 
-APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis;
+APPEND : appendRw openParenthesis id comma EXPRESSIONS closeParenthesis {   
+        $$ = new Append(getToken(@1), { id: $3, params: [$5] });
+    };
 
-GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis;
+GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis {
+        $$ = new GetValue(getToken(@1), { id: $3, params: [$5] });
+    };
 
 SETVALUE : setValueRw openParenthesis 
-id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis;
+id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis {
+        $$ = new SetValue(getToken(@1), { id: $3, params: [$5, $7] });
+    };
 
 WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis {
-        $$ = new WriteLine(getToken(@1), { id:'writeLine', params: [$3] });
+        $$ = new WriteLine(getToken(@1), { params: [$3] });
     };
 
 TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;

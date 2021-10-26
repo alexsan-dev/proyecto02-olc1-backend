@@ -12,7 +12,7 @@ class WriteLine extends FunctionCall {
 			id: string
 		}
 	) {
-		super(token, props, true)
+		super(token, { ...props, id: 'WriteLine' }, true)
 	}
 
 	// COMPILAR
