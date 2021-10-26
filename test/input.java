@@ -38,6 +38,28 @@ void init() {
 
     writeLine("Contador while: " + count);
   }
+
+  String count2 = "Hola1";
+
+  switch(count2){
+    case "Hola1":
+      writeLine("Case 1");
+      count2 = "Hola2";
+    case "Hola2":
+      writeLine("Case 2");
+      break;
+    case "Hola3":
+      writeLine("Case 3");
+      break;
+    case "Hola4":
+      writeLine("Case 4");
+      break;
+    default:
+      writeLine("Default");
+      break;
+  }
+
 }
+
 
 start with init();

@@ -63,6 +63,7 @@ class CycleControl extends Instruction {
 				const instruction = this.props.body[instructionCount]
 				if (!this.isOnBreak && !this.isOnContinue) this.handleBreak = !instruction.compile(localEnv)
 				else {
+					// REINICIAR CONTINUAR
 					if (this.isOnContinue) this.isOnContinue = false
 					break
 				}

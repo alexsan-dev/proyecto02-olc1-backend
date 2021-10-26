@@ -20,6 +20,7 @@ import Value from './expression/value'
 import ForLoop from './loop/forLoop'
 import Instruction from './models'
 import Main from './methods/main'
+import Switch from './control/switch'
 
 // EXPORTS
 export {
@@ -42,6 +43,7 @@ export {
 	ForLoop,
 	IncrementalAssignment,
 	ContinueValue,
+	Switch,
 	BreakValue,
 }
 export default Instruction

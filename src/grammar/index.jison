@@ -19,6 +19,7 @@
         Condition,
 	    BreakValue,
         ForLoop,
+        Switch,
         Value,
         Main } = require('../compiler/instruction')
 %}
@@ -229,7 +230,9 @@ INSTRUCTION : DECLARATION semicolom {
     | LOOPSEQ {
         $$ = $1;    
     }
-    | SWITCHSEQ
+    | SWITCHSEQ {
+        $$ = $1;
+    }
     | LOOPESCAPE {
         $$ = $1;
     };
@@ -554,13 +557,31 @@ openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* SWITCH */
 SWITCHSEQ : switchRw openParenthesis EXPRESSIONS closeParenthesis
-openBracket SWITCHSEQCASES closeBracket;
+    openBracket SWITCHSEQCASES closeBracket {
+        $$ = new Switch(getToken(@1), { value: $3, cases: $6 })
+    }
+    | switchRw openParenthesis EXPRESSIONS closeParenthesis
+    openBracket SWITCHSEQCASES defaultRw colom INSTRUCTIONS closeBracket {
+        $$ = new Switch(getToken(@1), { 
+            value: $3, cases: $6, default: { body: $9 } })
+    } 
+    | switchRw openParenthesis EXPRESSIONS closeParenthesis
+    openBracket defaultRw colom INSTRUCTIONS closeBracket {
+        $$ = new Switch(getToken(@1), { 
+            value: $3, default: { body: $8 } })
+    };
 
-SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT
-| SWITCHSEQCONTENT;
+SWITCHSEQCASES : SWITCHSEQCASES SWITCHSEQCONTENT {
+        $$ = $1;
+        $$.push($2);
+    }
+    | SWITCHSEQCONTENT {
+        $$ = [$1];
+    };
 
-SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS
-| defaultRw colom INSTRUCTIONS;
+SWITCHSEQCONTENT : caseRw EXPRESSIONS colom INSTRUCTIONS {
+        $$ = { case: $2, body: $4 };
+    };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* CICLOS */

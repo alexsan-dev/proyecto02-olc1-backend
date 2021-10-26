@@ -24,6 +24,8 @@ const compile = (instructions: Instruction[]) => {
 			instruction.compile(globalEnv)
 		} else if (instruction.name === 'Loop') {
 			instruction.compile(globalEnv)
+		} else if (instruction.name === 'Switch') {
+			instruction.compile(globalEnv)
 		}
 	})
 

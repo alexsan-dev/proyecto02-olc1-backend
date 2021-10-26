@@ -20,7 +20,8 @@ class ReturnValue extends Instruction {
 			const searchEnvironment = () => {
 				if (
 					currentEnvironment?.getName() !== 'Function' &&
-					currentEnvironment?.getName() !== 'Loop'
+					currentEnvironment?.getName() !== 'Loop' &&
+					currentEnvironment?.getName() !== 'Switch'
 				) {
 					if (currentEnvironment?.getPrevEnv()) {
 						currentEnvironment = currentEnvironment?.getPrevEnv()

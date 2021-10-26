@@ -4,7 +4,7 @@ import { Value } from '../instruction/expression'
 import { DataType, TokenInfo } from '../utils'
 import errors from '../error'
 
-type EnvironmentName = 'Function' | 'Main' | 'Global' | 'Condition' | 'Loop'
+type EnvironmentName = 'Function' | 'Main' | 'Global' | 'Condition' | 'Loop' | 'Case' | 'Switch'
 class Environment {
 	// GLOBALES
 	private vars: {
