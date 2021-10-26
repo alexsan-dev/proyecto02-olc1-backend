@@ -6,9 +6,9 @@ int getSum(int a, int b) {
 }
 
 void setHello() {
-  String hello = "Hello local";
   hello = "New hello";
 }
+
 
 void init() {
   int num[] = { 1, getSum(1, 1), 3, 4 };
@@ -59,11 +59,30 @@ void init() {
       break;
   }
 
-  DynamicList<int> list = new DynamicList<int>;
-  append(list, 3);
-  append(list, 4);
-  append(list, 5);
-  setValue(list, 0, 2);
+  DynamicList<DynamicList<int>> list = new DynamicList<DynamicList<int>>;
+  DynamicList<int> subList = new DynamicList<int>;
+  DynamicList<int> subList2 = new DynamicList<int>;
+  DynamicList<int> subList3 = new DynamicList<int>;
+
+  append(subList, 1);
+  append(subList, 2);
+  append(subList, 3);
+
+  append(subList2, 4);
+  append(subList2, 5);
+  append(subList2, 6);
+
+  append(subList3, 7);
+  append(subList3, 8);
+  append(subList3, 9);
+
+  append(list, subList);
+  append(list, subList2);
+  append(list, subList3);
+
+  setValue(list, 0, new DynamicList<int>);
+
+  writeLine(list);
   writeLine(getValue(list, 0));
 }
 

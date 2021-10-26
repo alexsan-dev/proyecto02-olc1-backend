@@ -33,7 +33,6 @@ class GetValue extends FunctionCall {
 								this.refValue = new Value(this.token, {
 									value: currentList[indexNum],
 									type: list.getType(),
-									refType: list.getType(),
 								})
 							} else {
 								compile = false

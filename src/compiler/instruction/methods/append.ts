@@ -23,7 +23,10 @@ class Append extends FunctionCall {
 					const newValue = this.props.params[0].getValue(env)
 					if (newValue && newValue.compile(env)) {
 						// VERIFICAR TIPOS
-						if (newValue.getType() === list.getType()) {
+						if (
+							newValue.getType() === list.props.generic ||
+							`${DataType.DYNAMICLIST}<${newValue.props.generic}>` === list.props.generic
+						) {
 							// AGREGAR
 							const temporal = list.getValue(env) as DataValue[]
 							temporal.push(newValue.getValue(env) as DataValue)
@@ -34,7 +37,7 @@ class Append extends FunctionCall {
 								new Value(this.token, {
 									value: temporal,
 									type: DataType.DYNAMICLIST,
-									refType: list.getType(),
+									generic: list.props.generic,
 								})
 							)
 						} else {
@@ -42,7 +45,9 @@ class Append extends FunctionCall {
 							errors.push({
 								token: this.token,
 								type: 'Semantic',
-								msg: `El no se puede asignar el tipo ${newValue.getType()} a ${list.getType()}.`,
+								msg: `El no se puede asignar el tipo ${newValue.getType()} a ${
+									list.props.generic
+								}.`,
 							})
 						}
 					}

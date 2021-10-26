@@ -78,7 +78,10 @@ class FunctionBlock extends Instruction {
 		if (this.env && 'getVar' in this.env) this.functionValue = this.env?.getVar('return')
 
 		if (this.props.type !== 'void') {
-			if (this.props.type === this.functionValue?.getType()) {
+			if (
+				this.props.type === this.functionValue?.getType() ||
+				this.props.type === `${DataType.DYNAMICLIST}<${this.functionValue?.props.generic}>`
+			) {
 				return compiles.every((result: boolean) => result === true)
 			} else {
 				errors.push({

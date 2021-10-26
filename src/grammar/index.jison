@@ -3,6 +3,7 @@
     const errors = require('../compiler/error')
     const { 
         IncrementalAssignment,
+        DynamicListValue,
         VectorAssignment,
         VectorPosition,
         FunctionBlock, 
@@ -12,7 +13,6 @@
         CycleControl,
         Declaration, 
         VectorValue,
-        DynamicList,
         ReturnValue,
         Expression,
         WriteLine, 
@@ -132,10 +132,8 @@ NULLCHAR "\\0"
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* REGEX */
-\"[^\"]*\"				    { yytext = yytext.substr(1,yyleng-2); 
-                                return 'text'; }
-\'[^\']?\'                  { yytext = yytext.substr(1,yyleng-2); 
-                                return 'character'; }
+\"[^\"]*\"				    { yytext = yytext.substr(1,yyleng-2); return 'text'; }
+\'[^\']?\'                  { yytext = yytext.substr(1,yyleng-2); return 'character'; }
 [0-9]*"."[0-9]+\b           return 'decimal'
 [0-9]+\b				    return 'integer'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
@@ -143,9 +141,7 @@ NULLCHAR "\\0"
 <<EOF>>				        return 'EOF'
 .					        { errors.default.push({
                                 type: 'Lexical',
-                                token: { 
-                                    line: yylloc.first_line, 
-                                    col: yylloc.fist_column },
+                                token: { line: yylloc.first_line, col: yylloc.fist_column },
                                 msg: `${yytext} no reconocido`
                             }); }
 
@@ -279,9 +275,6 @@ ASSIGNMENT : id {
     }
     | VECTORASSIGNMENT {
         $$ = $1;
-    }
-    | DYNAMICLIST {
-        $$ = $1;
     };
 
 INCREMENTALASSIGNMENT : id plusPlus {
@@ -311,26 +304,9 @@ NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket
         $$ = new VectorAssignment(getToken(@1), { id: $1, defValues: $6 });
     };
 
-DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
-        $$ = new DynamicList(getToken(@1), { id: $1, type: $6 });
-    };
-
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
-VARVALUE : 
-    | character {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.CHARACTER })
-    }
-    | integer {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.INTEGER })
-    }
-    | trBool {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
-    }
-    | flBool {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
-    }
-    | decimal {
+VARVALUE : decimal {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.DOUBLE })
     }
     | text {
@@ -338,6 +314,18 @@ VARVALUE :
     }
     | id {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.ID })
+    }
+    | integer {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.INTEGER })
+    }
+    | character {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.CHARACTER })
+    }
+    | trBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
+    }
+    | flBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
     }
     | FUNCTIONCALL {
         $$ = new Value(getToken(@1), { 
@@ -350,8 +338,16 @@ VARVALUE :
     | VECTORVALUE {
         $$ = $1;
     }
+    | DYNAMICLISTVALUE {
+        $$ = $1;
+    }
     | TOLOWER | TOUPPER | LENGTHSEQ
-| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND;
+| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
+    ;
+
+DYNAMICLISTVALUE : newRw dynamicListRw minor TYPE major {
+        $$ = new DynamicListValue(getToken(@1), { type: $4 });
+    };
 
 VECTORVALUE : id openSquareBracket EXPRESSIONS closeSquareBracket {
         $$ = new VectorValue(getToken(@1), { 
@@ -490,7 +486,10 @@ FUNCTIONCALL : id openParenthesis EXPLIST closeParenthesis {
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | SETVALUE | FUNCTIONCALL 
+METHODS : APPEND | SETVALUE 
+    | FUNCTIONCALL {
+        $$ = $1;
+    }
     | WRITELINE {
         $$ = $1;
     };

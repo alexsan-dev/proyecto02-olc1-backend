@@ -24,7 +24,8 @@ class Assignment extends Instruction {
 				// EXCEPCIONES PARA NUMEROS
 				const typeException =
 					(type === DataType.DOUBLE && value.getType() === DataType.INTEGER) ||
-					(type === DataType.INTEGER && value.getType() === DataType.DOUBLE)
+					(type === DataType.INTEGER && value.getType() === DataType.DOUBLE) ||
+					type === `${DataType.DYNAMICLIST}<${value.props.generic}>`
 
 				if (type === value.getType() || typeException) {
 					if (isNew) env.addVar(this.id, type, value)
@@ -35,7 +36,7 @@ class Assignment extends Instruction {
 						errors.push({
 							type: 'Semantic',
 							token: this.token,
-							msg: `No se puede asignar el tipo ${value.getType()} a ${type}.`,
+							msg: `No se puede asignar el topo ${value.getType()} a ${type}.`,
 						})
 					} else
 						errors.push({

@@ -1,10 +1,10 @@
 // UTILS
 import IncrementalAssignment from './variable/incremental'
 import VectorPosition from './variable/vectorPosition'
+import DynamicListValue from './expression/listValue'
 import ContinueValue from './methods/continueValue'
 import VectorValue from './expression/vectorValue'
 import ExpAssignment from './variable/expression'
-import DynamicList from './variable/dynamicList'
 import VectorAssignment from './variable/vector'
 import Declaration from './variable/declaration'
 import FunctionBlock from './methods/functions'
@@ -30,7 +30,6 @@ export {
 	Declaration,
 	Assignment,
 	VectorAssignment,
-	DynamicList,
 	Value,
 	VectorValue,
 	VectorPosition,
@@ -46,6 +45,7 @@ export {
 	ForLoop,
 	IncrementalAssignment,
 	ContinueValue,
+	DynamicListValue,
 	Switch,
 	BreakValue,
 	GetValue,

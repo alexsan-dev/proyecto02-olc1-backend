@@ -1,5 +1,5 @@
 import Environment from '../../runtime/environment'
-import { TokenInfo } from '../../utils/types'
+import DataType, { TokenInfo } from '../../utils/types'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import Instruction from '../models'
@@ -42,7 +42,9 @@ class ReturnValue extends Instruction {
 						new Value(this.token, {
 							value: value.getValue(env) as string,
 							type: value.getType(),
-							refType: value.getType(),
+							generic: value.getType().includes(DataType.DYNAMICLIST)
+								? value.props.generic
+								: undefined,
 						})
 					)
 

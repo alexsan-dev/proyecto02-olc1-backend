@@ -27,7 +27,10 @@ class SetValue extends FunctionCall {
 							const newValue = this.props.params[1].getValue(env)
 							if (newValue && newValue.compile(env)) {
 								// VERIFICAR TIPOS
-								if (newValue.getType() === list.getType()) {
+								if (
+									newValue.getType() === list.props.generic ||
+									`${DataType.DYNAMICLIST}<${newValue.props.generic}>` === list.props.generic
+								) {
 									// AGREGAR
 									const temporal = list.getValue(env) as DataValue[]
 									const indexNum = indexValue.getValue(env) as number
@@ -39,7 +42,7 @@ class SetValue extends FunctionCall {
 										new Value(this.token, {
 											value: temporal,
 											type: DataType.DYNAMICLIST,
-											refType: list.getType(),
+											generic: list.props.generic,
 										})
 									)
 								} else {
@@ -47,7 +50,9 @@ class SetValue extends FunctionCall {
 									errors.push({
 										token: this.token,
 										type: 'Semantic',
-										msg: `El no se puede asignar el tipo ${newValue.getType()} a ${list.getType()}`,
+										msg: `El no se puede asignar el tipo ${newValue.getType()} a ${
+											list.props.generic
+										}`,
 									})
 								}
 							}
