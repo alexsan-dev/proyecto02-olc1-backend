@@ -132,8 +132,10 @@ NULLCHAR "\\0"
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* REGEX */
-\"[^\"]*\"				    { yytext = yytext.substr(1,yyleng-2); return 'text'; }
-\'[^\']?\'                  { yytext = yytext.substr(1,yyleng-2); return 'character'; }
+\"[^\"]*\"				    { yytext = yytext.substr(1,yyleng-2); 
+                                return 'text'; }
+\'[^\']?\'                  { yytext = yytext.substr(1,yyleng-2); 
+                                return 'character'; }
 [0-9]*"."[0-9]+\b           return 'decimal'
 [0-9]+\b				    return 'integer'
 ([a-zA-Z])[a-zA-Z0-9_]*	    return 'id'
@@ -141,7 +143,9 @@ NULLCHAR "\\0"
 <<EOF>>				        return 'EOF'
 .					        { errors.default.push({
                                 type: 'Lexical',
-                                token: { line: yylloc.first_line, col: yylloc.fist_column },
+                                token: { 
+                                    line: yylloc.first_line, 
+                                    col: yylloc.fist_column },
                                 msg: `${yytext} no reconocido`
                             }); }
 
@@ -292,7 +296,8 @@ INCREMENTALASSIGNMENT : id plusPlus {
 VECTORASSIGNMENT : VECTORVALUE equals EXPRESSIONS {
         $$ = new VectorPosition(getToken(@1), { 
             value: $1, exp: $3 });
-    } | VECTORVALUE equals TERNARY {
+    } 
+    | VECTORVALUE equals TERNARY {
         $$ = new VectorPosition(getToken(@1), { 
             value: $1, exp: $3 });
     };
@@ -312,7 +317,20 @@ DYNAMICLIST : id equals newRw dynamicListRw minor TYPE major {
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* VALORES DE VARIABLES */
-VARVALUE : decimal {
+VARVALUE : 
+    | character {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.CHARACTER })
+    }
+    | integer {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.INTEGER })
+    }
+    | trBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
+    }
+    | flBool {
+        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
+    }
+    | decimal {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.DOUBLE })
     }
     | text {
@@ -321,19 +339,11 @@ VARVALUE : decimal {
     | id {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.ID })
     }
-    | integer {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.INTEGER })
-    }
-    | character {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.CHARACTER })
-    }
-    | trBool {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
-    }
-    | flBool {
-        $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
-    }
     | FUNCTIONCALL {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: '', fromCall: $1 })
+    }
+    | GETVALUE {
         $$ = new Value(getToken(@1), { 
             value: '', type: '', fromCall: $1 })
     }
@@ -341,11 +351,7 @@ VARVALUE : decimal {
         $$ = $1;
     }
     | TOLOWER | TOUPPER | LENGTHSEQ
-| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
-    |  GETVALUE {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: '', fromCall: $1 })
-    };
+| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND;
 
 VECTORVALUE : id openSquareBracket EXPRESSIONS closeSquareBracket {
         $$ = new VectorValue(getToken(@1), { 
@@ -498,7 +504,7 @@ GETVALUE : getValueRw openParenthesis id comma EXPRESSIONS closeParenthesis {
     };
 
 SETVALUE : setValueRw openParenthesis 
-id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis {
+    id comma EXPRESSIONS comma EXPRESSIONS closeParenthesis {
         $$ = new SetValue(getToken(@1), { id: $3, params: [$5, $7] });
     };
 
@@ -561,7 +567,7 @@ CONTROLSEQELIFS : CONTROLSEQELIFS CONTROLSEQELIF {
     };
 
 CONTROLSEQELIF : elseRw ifRw 
-openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
+    openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
         $$ = { exp: $4, body: $6 };
     };
 
@@ -605,7 +611,7 @@ WHILESEQ : whileRw openParenthesis EXPRESSIONS closeParenthesis BLOCKCONTENT {
     };
 
 DOWHILESEQ : doRw BLOCKCONTENT 
-whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom {
+    whileRw openParenthesis EXPRESSIONS closeParenthesis semicolom {
         $$ = new CycleControl(getToken(@1), { 
             condition: $5, body: $2, isDoLoop: true
          })

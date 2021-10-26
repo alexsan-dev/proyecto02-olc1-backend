@@ -68,7 +68,6 @@ class GetValue extends FunctionCall {
 
 	// OBTENER VALOR
 	public getValue(): Value | undefined {
-		console.log('dafuck')
 		return this.refValue
 	}
 }

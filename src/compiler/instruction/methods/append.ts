@@ -14,7 +14,7 @@ class Append extends FunctionCall {
 	// COMPILAR
 	public compile(env: Environment): boolean {
 		// OBTENER LISTA
-		let compile = false
+		let compile = true
 		const list = env.getVar(this.props.id)
 		if (list) {
 			if (list.compile(env)) {
