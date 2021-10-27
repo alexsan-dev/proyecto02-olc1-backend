@@ -58,7 +58,7 @@ class VectorAssignment extends Assignment {
 			if (values.every((value) => value.type === values[0].type)) {
 				if (values[0].type === type) {
 					const validValues: DataValue[] = values.map((value) => value.value)
-					const newValue: Value = new Value(this.token, { value: validValues, type })
+					const newValue: Value = new Value(this.token, { value: validValues, type, generic: type })
 					return newValue
 				} else
 					errors.push({

@@ -58,9 +58,6 @@ class FunctionBlock extends Instruction {
 
 	// COMPILAR FUNCION
 	public compile(): boolean {
-		// AGREGAR PARAMETROS A ENTORNO LOCAL
-		this.props.params.forEach((param) => this.env?.addVar(param.id, param.type, undefined))
-
 		// COMPILAR CONTENIDO
 		const compiles: boolean[] = []
 		for (

@@ -59,7 +59,8 @@ class Value extends Instruction {
 					case DataType.STRING:
 						return this.props.value
 					case DataType.INTEGER:
-						if (typeof this.props.value === 'string') return parseInt(this.props.value as string)
+						if (typeof this.props.value === 'string')
+							return parseInt(this.props.value as string, 10)
 						else return this.props.value
 					case DataType.DOUBLE:
 						if (typeof this.props.value === 'string') return parseFloat(this.props.value as string)

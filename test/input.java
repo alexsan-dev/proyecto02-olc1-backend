@@ -84,6 +84,71 @@ void init() {
 
   writeLine(list);
   writeLine(getValue(list, 0));
+
+  // NATIVAS
+  String text = "Alex";
+  text = toLower(text);
+  text = toUpper(text);
+  writeLine(text);
+
+  string cad_1 = toUpper("hOla MunDo"); // cad_1 = “HOLA MUNDO”
+ string cad_2 = toUpper("resultado = " + 100); // cad_2 = “RESULTADO = 100”
+
+ writeLine(cad_1);
+ writeLine(cad_2);
+
+  DynamicList<int> lista2 =new DynamicList <int>;
+string vector2[] = {"hola", "Mundo"};
+int tam_lista = length(lista2); // tam_lista = 0
+int tam_vector = length(vector2); // tam_vector = 2
+int tam_hola = length(vector2[0]); // tam_hola = 4
+
+
+writeLine(tam_lista);
+writeLine(tam_vector);
+writeLine(tam_hola);
+
+int nuevoValor = truncate(3.53); // nuevoValor = 3
+int otroValor = truncate(10); // otroValor = 10
+double decimal = 15.4654849;
+int entero = truncate(decimal); // entero = 15
+
+
+writeLine(nuevoValor);
+writeLine(otroValor);
+writeLine(entero);
+
+Double valor = round(5.8); //valor = 6
+Double valor2 = round(5.4); //valor2 = 5
+
+writeLine(valor);
+writeLine(valor2);
+
+DynamicList<int> lista22 =new DynamicList <int>;
+String tipo = typeof(15); // tipo = “int”
+String tipo2 = typeof(15.25); // tipo = “double”
+String tipo3 = typeof(lista22); // tipo3 = “lista”
+writeLine(tipo);
+writeLine(tipo2);
+writeLine(tipo3);
+writeLine(typeof(vector2));
+
+String valorw2 = toString(14); // valor = “14”
+String valorw3 = toString(true); // valor = “true” 
+
+writeLine(valorw2);
+writeLine(valorw3);
+
+DynamicList<char> caracteres = toCharArray("Hola");
+/*
+caracteres [[0]] = “H”
+caracteres [[1]] = “o”
+caracteres [[2]] = “l”
+caracteres [[3]] = “a”
+*/
+
+writeLine(caracteres);
+writeLine(typeof(caracteres));
 }
 
 

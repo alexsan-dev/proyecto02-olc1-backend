@@ -36,7 +36,7 @@ class Assignment extends Instruction {
 						errors.push({
 							type: 'Semantic',
 							token: this.token,
-							msg: `No se puede asignar el topo ${value.getType()} a ${type}.`,
+							msg: `No se puede asignar el tipo ${value.getType()} a ${type}.`,
 						})
 					} else
 						errors.push({

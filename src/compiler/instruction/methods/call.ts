@@ -42,6 +42,7 @@ class FunctionCall extends Instruction {
 			// OBTENER EXPRESIONES
 			functionBlock.setEnv(env)
 			const functionEnv: Environment | undefined = functionBlock.getEnv()
+
 			if (functionEnv) {
 				const values: { value: Value; type: DataType }[] = this.props.params.map(
 					(exp: Expression) => ({
@@ -60,14 +61,13 @@ class FunctionCall extends Instruction {
 							compile = value.value.compile(env)
 
 							if (compile) {
-								if (value.type === functionBlock.props.params[index].type) {
+								if (
+									value.type === functionBlock.props.params[index].type ||
+									`${DataType.DYNAMICLIST}<${value.value.props.generic}>` ===
+										functionBlock.props.params[index].type
+								) {
 									// ASIGNAR VARIABLE A ENTORNO DE FUNCION
-									if (value.value.compile(env))
-										functionEnv.addVar(
-											functionBlock.props.params[index].id,
-											value.type,
-											value.value
-										)
+									functionEnv.addVar(functionBlock.props.params[index].id, value.type, value.value)
 								} else {
 									errors.push({
 										type: 'Semantic',

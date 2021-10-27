@@ -36,20 +36,17 @@ class ReturnValue extends Instruction {
 				const value = this.props.content.getValue(env)
 				if (value?.compile(env)) {
 					// EVALUAR Y GUARDAR
-					currentEnvironment.addVar(
-						'return',
-						value.getType(),
-						new Value(this.token, {
-							value: value.getValue(env) as string,
-							type: value.getType(),
-							generic: value.getType().includes(DataType.DYNAMICLIST)
-								? value.props.generic
-								: undefined,
-						})
-					)
+					const newValue = new Value(this.token, {
+						value: value.getValue(env) as string,
+						type: value.getType(),
+						generic: value.getType().includes(DataType.DYNAMICLIST)
+							? value.props.generic
+							: undefined,
+					})
+					currentEnvironment.addVar('return', value.getType(), newValue)
+					const returnFunction = currentEnvironment.getFunction('return')
 
 					// EJECUTAR RETURN
-					const returnFunction = currentEnvironment.getFunction('return')
 					if (returnFunction) returnFunction.compile()
 					return true
 				} else return false

@@ -14,15 +14,23 @@
         Declaration, 
         VectorValue,
         ReturnValue,
+        ToCharArray,
         Expression,
         WriteLine, 
         Condition,
 	    BreakValue,
+        ToString,
         GetValue,
         SetValue,
+        Truncate,
+        ToLower,
+        ToUpper,
         ForLoop,
+        TypeOf,
         Switch,
+        Length,
         Append,
+        Round,
         Value,
         Main } = require('../compiler/instruction')
 %}
@@ -341,9 +349,38 @@ VARVALUE : decimal {
     | DYNAMICLISTVALUE {
         $$ = $1;
     }
-    | TOLOWER | TOUPPER | LENGTHSEQ
-| TYPEOFSEQ | TOSTRINGSEQ | TOCHARARRAY | TRUNCATE | ROUND
-    ;
+    | TOLOWER {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.STRING, fromCall: $1 })   
+    }
+    | TOUPPER {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.STRING, fromCall: $1 })   
+    }
+    | LENGTHSEQ {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.INTEGER, fromCall: $1 })
+    }
+    | TYPEOFSEQ {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.STRING, fromCall: $1 })    
+    }
+    | TOSTRINGSEQ {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.STRING, fromCall: $1 })
+    }
+    | TOCHARARRAY {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.INTEGER, fromCall: $1 })
+    }
+    | TRUNCATE {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.INTEGER, fromCall: $1 })
+    }
+    | ROUND {
+        $$ = new Value(getToken(@1), { 
+            value: '', type: DataType.INTEGER, fromCall: $1 })
+    };
 
 DYNAMICLISTVALUE : newRw dynamicListRw minor TYPE major {
         $$ = new DynamicListValue(getToken(@1), { type: $4 });
@@ -486,7 +523,12 @@ FUNCTIONCALL : id openParenthesis EXPLIST closeParenthesis {
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* BUILT-IN FUNCTIONS */
-METHODS : APPEND | SETVALUE 
+METHODS : APPEND {
+        $$ = $1;
+    }
+    | SETVALUE {
+        $$ = $1;
+    }
     | FUNCTIONCALL {
         $$ = $1;
     }
@@ -511,21 +553,37 @@ WRITELINE : writeLineRw openParenthesis EXPRESSIONS closeParenthesis {
         $$ = new WriteLine(getToken(@1), { params: [$3] });
     };
 
-TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis;
+TOLOWER : toLowerRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new ToLower(getToken(@1), { params: [$3] })
+    };
 
-TOUPPER : toUpperRw openParenthesis EXPRESSIONS closeParenthesis;
+TOUPPER : toUpperRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new ToUpper(getToken(@1), { params: [$3] })
+    };
 
-LENGTHSEQ : lengthRw openParenthesis VARVALUE closeParenthesis;
+LENGTHSEQ : lengthRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new Length(getToken(@1), { params: [$3] })
+    };
 
-TRUNCATE : truncateRw openParenthesis VARVALUE closeParenthesis;
+TRUNCATE : truncateRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new Truncate(getToken(@1), { params: [$3] })
+    };
 
-ROUND : roundRw openParenthesis VARVALUE closeParenthesis;
+ROUND : roundRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new Round(getToken(@1), { params: [$3] })
+    };
 
-TYPEOFSEQ : typeOfRw openParenthesis VARVALUE closeParenthesis;
+TYPEOFSEQ : typeOfRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new TypeOf(getToken(@1), { params: [$3] })
+    };
 
-TOSTRINGSEQ : toStringRw openParenthesis VARVALUE closeParenthesis;
+TOSTRINGSEQ : toStringRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new ToString(getToken(@1), { params: [$3] });
+    };
 
-TOCHARARRAY : toCharArrayRw openParenthesis VARVALUE closeParenthesis;
+TOCHARARRAY : toCharArrayRw openParenthesis EXPRESSIONS closeParenthesis {
+        $$ = new ToCharArray(getToken(@1), { params: [$3] });
+    };
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* SENTENCIAS DE CONTROL */
