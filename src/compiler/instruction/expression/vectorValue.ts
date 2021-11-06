@@ -12,7 +12,12 @@ class VectorValue extends Value {
 	// CONSTRUCTOR
 	constructor(
 		token: TokenInfo,
-		public props: { index: Expression; value: string | DataValue[]; type: DataType }
+		public props: {
+			index: Expression
+			value: string | DataValue[]
+			type: DataType
+			generic?: DataType
+		}
 	) {
 		super(token, props)
 		this.index = -1
@@ -54,8 +59,11 @@ class VectorValue extends Value {
 		// COMPILAR VARIABLE
 		if (compile) {
 			const newValue: Value | undefined = env.getVar(this.props.value as string)
-			if (newValue?.compile(env)) this.type = newValue.getType()
-			else compile = false
+			if (newValue?.compile(env)) {
+				this.type = newValue.props.generic || DataType.STRING
+				this.props.generic = undefined
+				this.props.type = newValue.props.generic || DataType.STRING
+			} else compile = false
 		}
 
 		// RETORNAR VALIDACION
@@ -68,7 +76,6 @@ class VectorValue extends Value {
 			if (this.props.value) {
 				const newValue: Value | undefined = env.getVar(this.props.value as string)
 				if (newValue?.compile(env)) {
-					this.type = newValue?.getType()
 					const value = newValue.getValue(env) as DataValue[]
 
 					// VERIFICAR POSICION

@@ -14,7 +14,7 @@ void init() {
   int num[] = { 1, getSum(1, 1), 3, 4 };
   num[0] = 7;
   boolean condition = getSum(num[0], 1) != 3;
-  int newValue = condition ? 90 : 7;
+  int newValue = !condition ? 90 : 7;
   num[getSum(1, 0)] = newValue;
   setHello();
   writeLine("Calculos: " + num);

@@ -16,6 +16,8 @@ const compile = (instructions: Instruction[]) => {
 			globalEnv.addFunction(functionBlock.props.id, functionBlock.props.type, functionBlock)
 		} else if (instruction.name === 'Declaration') {
 			instruction.compile(globalEnv)
+		} else if (instruction.name === 'Assignment') {
+			instruction.compile(globalEnv)
 		}
 	})
 

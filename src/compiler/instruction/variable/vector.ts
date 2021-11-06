@@ -98,7 +98,7 @@ class VectorAssignment extends Assignment {
 				return new Value(this.token, {
 					value: new Array(value.getValue(env) as number).fill(undefined),
 					type: DataType.ARRAY,
-					generic: this.props.type,
+					generic: type,
 				})
 			} else
 				errors.push({

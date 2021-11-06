@@ -52,7 +52,7 @@ class VectorPosition extends Assignment {
 										new Value(this.token, {
 											value: [...temporal],
 											type: refValue.getType(),
-											generic: refValue.getType(),
+											generic: refValue.props.generic,
 										})
 									)
 								}

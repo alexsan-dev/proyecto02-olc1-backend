@@ -1,5 +1,5 @@
-import Environment from '../../runtime/environment'
 import { DataType, DataValue, TokenInfo } from '../../utils'
+import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import FunctionBlock from './functions'
@@ -71,6 +71,7 @@ class FunctionCall extends Instruction {
 							if (compile) {
 								if (
 									value.type === functionBlock.props.params[index].type ||
+									value.value.props.generic === functionBlock.props.params[index].type ||
 									`${DataType.DYNAMICLIST}<${value.value.props.generic}>` ===
 										functionBlock.props.params[index].type
 								) {
@@ -89,7 +90,9 @@ class FunctionCall extends Instruction {
 										token: this.token,
 										msg: `Se esperaba un ${
 											functionBlock.props.params[index].type
-										} en el parametro ${index + 1} en la function ${this.props.id}`,
+										} en el parametro ${index + 1} en la function ${this.props.id} ${
+											value.value.props.generic
+										}`,
 									})
 									compile = false
 								}

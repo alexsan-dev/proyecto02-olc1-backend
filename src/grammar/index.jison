@@ -162,17 +162,14 @@ NULLCHAR "\\0"
 
 /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 /* PRESEDENCIA */
-%left 'minus'
-%nonassoc 'power'
-%left 'division' 'times'
+%left 'questionMark'
+%left 'minor' 'lessOrEquals' 'major' 'moreOrEquals' 'equalsEquals' 'nonEquals'
 %left 'plus' 'minus'
-%left 'module'
-%left 'equalsEquals' 'nonEquals' 'minor' 'lessOrEquals' 'major' 'moreOrEquals'
+%left 'times' 'division' 'module'
+%left 'and' 'or'
 %right 'not'
-%left 'and'
-%left 'or'
-%left 'openParenthesis' 'closeParenthesis'
-%left 'comma' 'semicolom'
+
+%nonassoc 'comma' 'power' 'openParenthesis' 'closeParenthesis'
 
 %start START
 
