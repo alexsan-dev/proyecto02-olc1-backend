@@ -1,15 +1,15 @@
-import DataType, { TokenInfo } from '../../utils/types'
-import { Expression, FunctionCall, Value } from '..'
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
+import { Expression, FunctionCall } from '..'
 import errors from '../../error'
 
 class ToString extends FunctionCall {
 	// GLOBALES
-	private refType: Value | undefined
+	private refValue: DataValue | undefined
 
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
-		super(token, { ...props, id: 'ToString' })
+		super(token, { ...props, id: 'ToString' }, true)
 	}
 
 	// COMPILAR
@@ -21,10 +21,7 @@ class ToString extends FunctionCall {
 				this.props.params[0].getValue(env)?.getType() === DataType.DOUBLE ||
 				this.props.params[0].getValue(env)?.getType() === DataType.BOOLEAN
 			) {
-				this.refType = new Value(this.token, {
-					value: this.props.params[0].getValue(env)?.getValue(env)?.toString() as string,
-					type: DataType.STRING,
-				})
+				this.refValue = this.props.params[0].getValue(env)?.getValue(env)?.toString()
 				return true
 			} else {
 				errors.push({
@@ -38,8 +35,13 @@ class ToString extends FunctionCall {
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
-		return this.refType
+	public getValue(): DataValue | undefined {
+		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return DataType.STRING
 	}
 }
 

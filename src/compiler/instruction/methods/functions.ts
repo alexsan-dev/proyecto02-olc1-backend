@@ -17,7 +17,8 @@ class FunctionBlock extends Instruction {
 			id: string
 			type: DataType | 'void'
 			content: Instruction[]
-			params: { type: DataType; id: string }[]
+			generic?: DataType
+			params: { type: DataType; generic: DataType; id: string }[]
 		}
 	) {
 		super(token, 'Function')
@@ -79,6 +80,10 @@ class FunctionBlock extends Instruction {
 				this.props.type === this.functionValue?.getType() ||
 				this.props.type === `${DataType.DYNAMICLIST}<${this.functionValue?.props.generic}>`
 			) {
+				if (this.props.type === DataType.ARRAY) {
+					if (this.props.generic !== this.functionValue?.props.generic) return false
+				}
+
 				return compiles.every((result: boolean) => result === true)
 			} else {
 				errors.push({

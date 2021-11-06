@@ -53,7 +53,9 @@ class Expression extends Instruction {
 			} else {
 				if (left.compile(env)) return left
 			}
-		} else if (this.props.value) if (this.props.value.compile(env)) return this.props.value
+		} else if (this.props.value) {
+			if (this.props.value.compile(env)) return this.props.value
+		}
 	}
 }
 

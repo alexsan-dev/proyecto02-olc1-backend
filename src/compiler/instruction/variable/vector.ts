@@ -14,7 +14,7 @@ class VectorAssignment extends Assignment {
 		public props: {
 			defValues?: Expression[]
 			type?: DataType
-			size?: number
+			size?: Expression
 			id: string
 		}
 	) {
@@ -29,12 +29,28 @@ class VectorAssignment extends Assignment {
 			const compiles = this.props.defValues.map((exp: Expression) => exp.compile(env))
 			compile = compiles.every((compile: boolean) => compile === true)
 		} else {
-			if (this.props.size && this.props.size >= 0) return true
-			else compile = false
+			const sizeValue = this.props.size?.getValue(env)
+			if (sizeValue?.getType() === DataType.INTEGER) {
+				if (this.props.size && (sizeValue.getValue(env) as number) >= 0) compile = true
+				else compile = false
+			} else {
+				compile = false
+				errors.push({
+					type: 'Semantic',
+					token: this.token,
+					msg: `El tamaño del vector deber ser un ${DataType.INTEGER}`,
+				})
+			}
 		}
 
 		// COMPILAR PADRE
-		if (compile) compile = super.setValue(env, type, this.getValue(env, type))
+		const newValue = this.getValue(env, type)
+
+		if (compile) {
+			if (newValue?.compile(env)) {
+				compile = super.setValue(env, DataType.ARRAY, newValue)
+			} else compile = false
+		}
 		return compile
 	}
 
@@ -58,7 +74,11 @@ class VectorAssignment extends Assignment {
 			if (values.every((value) => value.type === values[0].type)) {
 				if (values[0].type === type) {
 					const validValues: DataValue[] = values.map((value) => value.value)
-					const newValue: Value = new Value(this.token, { value: validValues, type, generic: type })
+					const newValue: Value = new Value(this.token, {
+						value: validValues,
+						type: DataType.ARRAY,
+						generic: type,
+					})
 					return newValue
 				} else
 					errors.push({
@@ -73,10 +93,19 @@ class VectorAssignment extends Assignment {
 					msg: 'La lista de valores debe ser del mismo tipo.',
 				})
 		} else if (this.props.size) {
-			return new Value(this.token, {
-				value: new Array(this.props.size).fill(undefined),
-				type: this.props.type || DataType.ID,
-			})
+			const value = this.props.size.getValue(env)
+			if (value?.getType() === DataType.INTEGER) {
+				return new Value(this.token, {
+					value: new Array(value.getValue(env) as number).fill(undefined),
+					type: DataType.ARRAY,
+					generic: this.props.type,
+				})
+			} else
+				errors.push({
+					type: 'Semantic',
+					token: this.token,
+					msg: `El tamaño del vector deber ser un ${DataType.INTEGER}`,
+				})
 		} else
 			errors.push({
 				type: 'Semantic',

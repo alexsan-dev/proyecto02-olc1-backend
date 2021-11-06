@@ -21,16 +21,6 @@ class Value extends Instruction {
 
 	// COMPILAR UN VALOR SIEMPRE DEVOLVERA TRUE
 	public compile(env: Environment): boolean {
-		// CONVERTIR FUNCION A VALOR
-		if (this.props.fromCall?.compile(env)) {
-			const valueCall = this.props.fromCall?.getValue()
-
-			if (valueCall?.compile(env)) {
-				this.props = valueCall?.props
-				this.refType = valueCall.getType()
-			}
-		}
-
 		// COMPILAR VALOR
 		if (this.props.type === DataType.ID) {
 			if (env) {
@@ -76,7 +66,6 @@ class Value extends Instruction {
 							const newValue: Value | undefined = env.getVar(this.props.value as string)
 							if (newValue?.compile(env)) {
 								this.refType = newValue.getType()
-								this.props.generic = newValue.props.generic
 								return newValue.getValue(env)
 							}
 						}

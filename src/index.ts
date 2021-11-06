@@ -6,7 +6,7 @@ import fs from 'fs'
 
 // INICIAR PARSER
 try {
-	const input: Buffer = fs.readFileSync('./test/input.java')
+	const input: Buffer = fs.readFileSync('./test/input2.java')
 	const instructions = parser.parse(input.toString())
 	compile(instructions)
 

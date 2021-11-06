@@ -1,17 +1,16 @@
-import DataType, { TokenInfo } from '../../utils/types'
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
-import Value from '../expression/value'
 import FunctionCall from './call'
 import errors from '../../error'
 
 class Round extends FunctionCall {
 	// GLOBALES
-	private refType: Value | undefined
+	private refValue: DataValue | undefined
 
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
-		super(token, { ...props, id: 'Round' })
+		super(token, { ...props, id: 'Round' }, true)
 	}
 
 	// COMPILAR
@@ -22,11 +21,8 @@ class Round extends FunctionCall {
 				this.props.params[0].getValue(env)?.getType() === DataType.DOUBLE ||
 				this.props.params[0].getValue(env)?.getType() === DataType.INTEGER
 			) {
-				this.refType = new Value(this.token, {
-					value:
-						Math.round((this.props.params[0].getValue(env)?.getValue(env) || 0) as number) || 0,
-					type: DataType.INTEGER,
-				})
+				this.refValue =
+					Math.round((this.props.params[0].getValue(env)?.getValue(env) || 0) as number) || 0
 				return true
 			} else {
 				errors.push({
@@ -40,8 +36,13 @@ class Round extends FunctionCall {
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
-		return this.refType
+	public getValue(): DataValue | undefined {
+		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return DataType.INTEGER
 	}
 }
 

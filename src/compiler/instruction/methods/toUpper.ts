@@ -1,15 +1,15 @@
-import DataType, { TokenInfo } from '../../utils/types'
-import { Expression, FunctionCall, Value } from '..'
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
+import { Expression, FunctionCall } from '..'
 import Environment from '../../runtime/environment'
 import errors from '../../error'
 
 class ToUpper extends FunctionCall {
 	// GLOBALES
-	private refType: Value | undefined
+	private refValue: DataValue | undefined
 
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
-		super(token, { ...props, id: 'ToUpper' })
+		super(token, { ...props, id: 'ToUpper' }, true)
 	}
 
 	// COMPILAR
@@ -17,14 +17,7 @@ class ToUpper extends FunctionCall {
 		if (this.props.params[0] && this.props.params[0].compile(env)) {
 			// VERIFICAR TIPO
 			if (this.props.params[0].getValue(env)?.getType() === DataType.STRING) {
-				this.refType = new Value(this.token, {
-					value: this.props.params[0]
-						.getValue(env)
-						?.getValue(env)
-						?.toString()
-						.toUpperCase() as string,
-					type: DataType.STRING,
-				})
+				this.refValue = this.props.params[0].getValue(env)?.getValue(env)?.toString().toUpperCase()
 				return true
 			} else {
 				errors.push({
@@ -38,8 +31,13 @@ class ToUpper extends FunctionCall {
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
-		return this.refType
+	public getValue(): DataValue | undefined {
+		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return DataType.STRING
 	}
 }
 

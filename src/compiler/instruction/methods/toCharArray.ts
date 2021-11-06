@@ -1,17 +1,19 @@
-import DataType, { TokenInfo } from '../../utils/types'
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
-import Value from '../expression/value'
 import FunctionCall from './call'
 import errors from '../../error'
 
 class ToCharArray extends FunctionCall {
 	// GLOBALES
-	private refType: Value | undefined
+	private refValue: DataValue | undefined
 
 	// CONSTRUCTOR
-	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
-		super(token, { ...props, id: 'ToCharArray' })
+	constructor(
+		token: TokenInfo,
+		public props: { id: string; params: Expression[]; generic?: DataType }
+	) {
+		super(token, { ...props, id: 'ToCharArray' }, true)
 	}
 
 	// COMPILAR
@@ -19,13 +21,10 @@ class ToCharArray extends FunctionCall {
 		if (this.props.params[0] && this.props.params[0].compile(env)) {
 			// VERIFICAR TIPO
 			if (this.props.params[0].getValue(env)?.getType() === DataType.STRING) {
-				this.refType = new Value(this.token, {
-					value: (
-						(this.props.params[0].getValue(env)?.getValue(env)?.toString() || '') as string
-					).split(''),
-					generic: DataType.CHARACTER,
-					type: DataType.DYNAMICLIST,
-				})
+				this.refValue = (
+					(this.props.params[0].getValue(env)?.getValue(env)?.toString() || '') as string
+				).split('')
+				this.props.generic = DataType.CHARACTER
 				return true
 			} else {
 				errors.push({
@@ -39,8 +38,13 @@ class ToCharArray extends FunctionCall {
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
-		return this.refType
+	public getValue(): DataValue | undefined {
+		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return DataType.DYNAMICLIST
 	}
 }
 

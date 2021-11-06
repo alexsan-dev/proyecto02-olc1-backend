@@ -42,22 +42,34 @@ class VectorPosition extends Assignment {
 						// INDICE DE EXPRESION
 						const index: number = this.props.value.getIndex()
 						if (index >= 0 && index < temporal.length) {
-							if (refValue.getType() === value?.getType()) {
+							if (refValue.props.generic === value?.getType()) {
 								// ASIGNAR NUEVO VALOR
 								const newValue = value?.getValue(env)
-								if (newValue && value?.compile(env)) temporal[index] = newValue
+								if (newValue && value?.compile(env)) {
+									temporal[index] = newValue
+									env.setVar(
+										this.id,
+										new Value(this.token, {
+											value: [...temporal],
+											type: refValue.getType(),
+											generic: refValue.getType(),
+										})
+									)
+								}
 							} else
 								errors.push({
 									type: 'Semantic',
 									token: this.token,
-									msg: `No se puede asignar el tipo ${value?.getType()} a ${refValue.getType()}`,
+									msg: `No se puede asignar el tipo ${value?.getType()} a ${
+										refValue.props.generic
+									}`,
 								})
 						} else {
 							compile = false
 							errors.push({
 								type: 'Semantic',
 								token: this.token,
-								msg: `La posicion ${index} esta fuera de rango para el arreglo ${this.props.value.props.value}.`,
+								msg: `La posicion ${index} esta fuera de rango para la lista ${this.props.value.props.value}.`,
 							})
 						}
 					}

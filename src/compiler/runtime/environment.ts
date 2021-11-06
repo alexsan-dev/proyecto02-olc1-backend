@@ -71,19 +71,26 @@ class Environment {
 
 	// OBTENER VARIABLE
 	public getVar(id: string): Value | undefined {
-		return this.vars[id]?.value ?? (this.prevEnv ? this.prevEnv?.getVar(id) : undefined)
+		if (id in this.vars) {
+			return this.vars[id].value
+		} else {
+			if (this.prevEnv) return this.prevEnv.getVar(id)
+			else return undefined
+		}
 	}
 
 	// OBTENER FUNCION
 	public getFunction(id: string): FunctionBlock | undefined {
-		return this.functions[id]?.value !== undefined
-			? Object.create(
+		if (id in this.functions) {
+			if (this.functions[id]?.value)
+				return Object.create(
 					Object.getPrototypeOf(this.functions[id]?.value),
 					Object.getOwnPropertyDescriptors(this.functions[id]?.value)
-			  )
-			: this.prevEnv
-			? this.prevEnv?.getFunction(id)
-			: undefined
+				)
+		} else {
+			if (this.prevEnv) return this.prevEnv.getFunction(id)
+			else return undefined
+		}
 	}
 
 	// AGREGAR FUNCION

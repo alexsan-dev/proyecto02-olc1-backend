@@ -78,7 +78,7 @@ class VectorValue extends Value {
 						errors.push({
 							type: 'Semantic',
 							token: this.token,
-							msg: `La posicion ${this.props.index} esta fuera de rango.`,
+							msg: `La posicion ${this.index} esta fuera de rango para la lista ${this.props.value}.`,
 						})
 				}
 			}

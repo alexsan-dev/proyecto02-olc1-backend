@@ -1,14 +1,15 @@
-import DataType, { TokenInfo } from '../../utils/types'
-import { Expression, FunctionCall, Value } from '..'
+/* eslint-disable indent */
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
+import { Expression, FunctionCall } from '..'
 import Environment from '../../runtime/environment'
 
 class TypeOf extends FunctionCall {
 	// GLOBALES
-	private refType: Value | undefined
+	private refValue: DataValue | undefined
 
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
-		super(token, { ...props, id: 'TypeOf' })
+		super(token, { ...props, id: 'TypeOf' }, true)
 	}
 
 	// COMPILAR
@@ -17,23 +18,25 @@ class TypeOf extends FunctionCall {
 			const newValue = this.props.params[0].getValue(env)
 			const valueType = newValue?.getType()
 			if (valueType) {
-				this.refType = new Value(this.token, {
-					value:
-						valueType === DataType.DYNAMICLIST
-							? `${DataType.DYNAMICLIST}<${newValue?.props.generic}>`
-							: typeof newValue?.getValue(env) === 'object'
-							? `${DataType.ARRAY}<${newValue?.props.generic}>`
-							: valueType,
-					type: DataType.STRING,
-				})
+				this.refValue =
+					valueType === DataType.DYNAMICLIST
+						? `${DataType.DYNAMICLIST}<${newValue?.props.generic}>`
+						: typeof newValue?.getValue(env) === 'object'
+						? `${DataType.ARRAY}<${newValue?.props.generic}>`
+						: valueType
 			}
 			return true
 		} else return false
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
-		return this.refType
+	public getValue(): DataValue | undefined {
+		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return DataType.STRING
 	}
 }
 

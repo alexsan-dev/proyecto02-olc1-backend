@@ -19,12 +19,14 @@ const operateValues = (
 	right?: Value,
 	condition?: Value
 ): Value | undefined => {
+	// COMPILAR PRIMERO
+
 	// PROPIEDADES DE EXP IZQUIERDA
-	const lValue: DataValue | undefined = left.getValue(env)
+	const lValue: DataValue | undefined = left.compile(env) ? left.getValue(env) : undefined
 	const lType: DataType | undefined = left.getType()
 
 	// PROPIEDADES DE EXP DERECHA
-	const rValue: DataValue | undefined = right?.getValue(env)
+	const rValue: DataValue | undefined = right?.compile(env) ? right?.getValue(env) : undefined
 	const rType: DataType | undefined = right?.getType()
 
 	// PROPIEDADES DE CONDICION
@@ -269,62 +271,62 @@ const operateValues = (
 					break
 			}
 			break
-		// TODO: division por 0
 		case Operator.DIVISION:
-			switch (lType) {
-				case DataType.INTEGER:
-					switch (rType) {
-						case DataType.INTEGER:
-							value = (lValue as number) / (rValue as number)
-							type = DataType.DOUBLE
-							break
-						case DataType.DOUBLE:
-							value = (lValue as number) / (rValue as number)
-							type = DataType.DOUBLE
-							break
-						case DataType.CHARACTER:
-							value = (lValue as number) / (rValue as string).charCodeAt(0)
-							type = DataType.DOUBLE
-							break
-						default:
-							break
-					}
-					break
-				case DataType.DOUBLE:
-					switch (rType) {
-						case DataType.INTEGER:
-							value = (lValue as number) / (rValue as number)
-							type = DataType.DOUBLE
-							break
-						case DataType.DOUBLE:
-							value = (lValue as number) / (rValue as number)
-							type = DataType.DOUBLE
-							break
-						case DataType.CHARACTER:
-							value = (lValue as number) / (rValue as string).charCodeAt(0)
-							type = DataType.DOUBLE
-							break
-						default:
-							break
-					}
-					break
-				case DataType.CHARACTER:
-					switch (rType) {
-						case DataType.INTEGER:
-							value = (lValue as string).charCodeAt(0) / (rValue as number)
-							type = DataType.INTEGER
-							break
-						case DataType.DOUBLE:
-							value = (lValue as string).charCodeAt(0) / (rValue as number)
-							type = DataType.DOUBLE
-							break
-						default:
-							break
-					}
-					break
-				default:
-					break
-			}
+			if ((rValue as number) !== 0)
+				switch (lType) {
+					case DataType.INTEGER:
+						switch (rType) {
+							case DataType.INTEGER:
+								value = (lValue as number) / (rValue as number)
+								type = DataType.DOUBLE
+								break
+							case DataType.DOUBLE:
+								value = (lValue as number) / (rValue as number)
+								type = DataType.DOUBLE
+								break
+							case DataType.CHARACTER:
+								value = (lValue as number) / (rValue as string).charCodeAt(0)
+								type = DataType.DOUBLE
+								break
+							default:
+								break
+						}
+						break
+					case DataType.DOUBLE:
+						switch (rType) {
+							case DataType.INTEGER:
+								value = (lValue as number) / (rValue as number)
+								type = DataType.DOUBLE
+								break
+							case DataType.DOUBLE:
+								value = (lValue as number) / (rValue as number)
+								type = DataType.DOUBLE
+								break
+							case DataType.CHARACTER:
+								value = (lValue as number) / (rValue as string).charCodeAt(0)
+								type = DataType.DOUBLE
+								break
+							default:
+								break
+						}
+						break
+					case DataType.CHARACTER:
+						switch (rType) {
+							case DataType.INTEGER:
+								value = (lValue as string).charCodeAt(0) / (rValue as number)
+								type = DataType.INTEGER
+								break
+							case DataType.DOUBLE:
+								value = (lValue as string).charCodeAt(0) / (rValue as number)
+								type = DataType.DOUBLE
+								break
+							default:
+								break
+						}
+						break
+					default:
+						break
+				}
 			break
 		case Operator.POWER:
 			switch (lType) {

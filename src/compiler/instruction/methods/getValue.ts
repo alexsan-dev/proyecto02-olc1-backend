@@ -1,16 +1,20 @@
 import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import Expression from '../expression/data'
-import Value from '../expression/value'
 import FunctionCall from './call'
 import errors from '../../error'
 
 class GetValue extends FunctionCall {
-	private refValue: Value | undefined
+	private refValue: DataValue | undefined
+	private listType: DataType
 
 	// CONSTRUCTOR
-	constructor(token: TokenInfo, public props: { id: string; params: [Expression] }) {
+	constructor(
+		token: TokenInfo,
+		public props: { id: string; params: [Expression]; generic?: DataType }
+	) {
 		super(token, { ...props, id: 'GetValue' }, true)
+		this.listType = DataType.ID
 	}
 
 	// COMPILAR
@@ -30,10 +34,9 @@ class GetValue extends FunctionCall {
 							const currentList = list.getValue(env) as DataValue[]
 
 							if (indexNum >= 0 && indexNum < currentList.length) {
-								this.refValue = new Value(this.token, {
-									value: currentList[indexNum],
-									type: list.getType(),
-								})
+								this.refValue = currentList[indexNum]
+								this.props.generic = list.props.generic ?? DataType.STRING
+								this.listType = list.getType()
 							} else {
 								compile = false
 								errors.push({
@@ -66,8 +69,13 @@ class GetValue extends FunctionCall {
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
+	public getValue(): DataValue | undefined {
 		return this.refValue
+	}
+
+	// OBTENER TIPO
+	public getType(): DataType {
+		return this.listType
 	}
 }
 

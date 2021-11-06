@@ -1,22 +1,29 @@
-void Principal(){
-    WriteLine("-----------Factorial Recursivo---------");
-    WriteLine("8! = " + factorialRecursivo(8));
+int burbuja[] ( int num[] ){
+  int i;
+  boolean flag = true;
+  int temp;
+  while ( flag ){
+    flag = false;  
+
+    for( i=0;  i < length(num);  i++ ){
+    WriteLine( num[ i ] > num[i+1] );
+      if ( num[ i ] > num[i+1] ){
+        temp = num[ i ]; 
+        num[ i ] = num[ i+1 ];
+        num[ i+1 ] = temp;
+        flag = true; 
+      } 
+    } 
+  } 
+  return num;
 }
 
+void main() {
 
-int factorialRecursivo(int n) {
-    if (n == 0) {
-        return 1;
-    }
-    return (n * factorialRecursivo(n - 1));
+  int arreglo[] = {8,6,7,2,1,8,6,8,7,1,9,7,7,10};
+  int arregloOrdenado[] = new int[length(arreglo)]; 
+  arregloOrdenado = burbuja(arreglo);
+  WriteLine(arregloOrdenado);
 }
 
-start With Principal();
-
-/*
---------------------SALIDA ESPERADA-----------------
------------Factorial Iterativo---------
-8! = 40320
------------Factorial Recursivo---------
-8! = 40320
-*/
+start with main();

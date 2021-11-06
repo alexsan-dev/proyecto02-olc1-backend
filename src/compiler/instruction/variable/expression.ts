@@ -1,4 +1,4 @@
-import DataType, { TokenInfo } from '../../utils/types'
+import DataType, { DataValue, TokenInfo } from '../../utils/types'
 import Environment from '../../runtime/environment'
 import { Value, Expression } from '../expression'
 import Assignment from './assignment'
@@ -13,14 +13,11 @@ class ExpAssignment extends Assignment {
 
 	// COMPILAR
 	public compile(env: Environment, type: DataType): boolean {
+		const nextValue: Value | undefined = this.getValue(env, type)
 		const value: Value | undefined = env.getVar(this.props.id)
 		value?.compile(env)
-		return super.setValue(
-			env,
-			value?.getType() ?? type,
-			this.getValue(env, type),
-			type !== undefined
-		)
+
+		return super.setValue(env, value?.getType() ?? type, nextValue, type !== undefined)
 	}
 
 	// OBTENER VALOR
@@ -28,7 +25,12 @@ class ExpAssignment extends Assignment {
 		if (this.props.exp) {
 			if (this.props.exp?.compile(env)) {
 				const value: Value | undefined = this.props.exp.getValue(env)
-				return value
+				if (value)
+					return new Value(this.token, {
+						value: value?.getValue(env) as DataValue,
+						type: value?.getType() as DataType,
+						generic: value?.props.generic,
+					})
 			}
 		} else return new Value(this.token, { value: defaultValues(type), type })
 	}

@@ -19,8 +19,11 @@ class WriteLine extends FunctionCall {
 	public compile(env: Environment): boolean {
 		// OBTENER VALORES
 		this.props.params.forEach((exp) => {
-			if (exp.compile() && exp.getValue(env)?.compile(env))
-				console.log(exp.getValue(env)?.getValue(env))
+			if (exp.compile(env)) {
+				if (exp.getValue(env)?.compile(env)) {
+					console.log(exp.getValue(env)?.getValue(env))
+				}
+			}
 		})
 		return true
 	}

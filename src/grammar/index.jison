@@ -304,7 +304,7 @@ VECTORASSIGNMENT : VECTORVALUE equals EXPRESSIONS {
     };
 
 NEWVECTORASSIGNMENT : id openSquareBracket closeSquareBracket 
-    equals newRw TYPE openSquareBracket integer closeSquareBracket {
+    equals newRw TYPE openSquareBracket EXPRESSIONS closeSquareBracket {
         $$ = new VectorAssignment(getToken(@1), { type: $6, id: $1, size: $8 });
     }
     | id openSquareBracket closeSquareBracket
@@ -335,51 +335,41 @@ VARVALUE : decimal {
     | flBool {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
     }
+    | TOLOWER {
+        $1   
+    }
+    | TOUPPER {
+        $1   
+    }
+    | LENGTHSEQ {
+        $1
+    }
+    | TYPEOFSEQ {
+        $1
+    }
+    | TOSTRINGSEQ {
+        $1
+    }
+    | TOCHARARRAY {
+        $1
+    }
+    | TRUNCATE {
+        $1
+    }
+    | ROUND {
+        $1
+    }  
     | FUNCTIONCALL {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: '', fromCall: $1 })
+        $1
     }
     | GETVALUE {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: '', fromCall: $1 })
-    }
+        $1
+    }  
     | VECTORVALUE {
         $$ = $1;
     }
     | DYNAMICLISTVALUE {
         $$ = $1;
-    }
-    | TOLOWER {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.STRING, fromCall: $1 })   
-    }
-    | TOUPPER {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.STRING, fromCall: $1 })   
-    }
-    | LENGTHSEQ {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.INTEGER, fromCall: $1 })
-    }
-    | TYPEOFSEQ {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.STRING, fromCall: $1 })    
-    }
-    | TOSTRINGSEQ {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.STRING, fromCall: $1 })
-    }
-    | TOCHARARRAY {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.INTEGER, fromCall: $1 })
-    }
-    | TRUNCATE {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.INTEGER, fromCall: $1 })
-    }
-    | ROUND {
-        $$ = new Value(getToken(@1), { 
-            value: '', type: DataType.INTEGER, fromCall: $1 })
     };
 
 DYNAMICLISTVALUE : newRw dynamicListRw minor TYPE major {
@@ -496,6 +486,8 @@ PARAMSLIST : PARAMSLIST comma PARAMVAR {
 
 PARAMVAR : TYPE id {
         $$ = { type: $1, id: $2 };
+    } | TYPE id openSquareBracket closeSquareBracket {
+        $$ = { type: DataType.ARRAY, id: $2, generic: $1 };
     };
 
 FUNCTIONPARAMS : openParenthesis PARAMSLIST closeParenthesis {
@@ -509,6 +501,10 @@ FUNCTION : TYPE id FUNCTIONPARAMS BLOCKCONTENT {
         $$ = new FunctionBlock(getToken(@1), { 
             id: $2, type: $1, params: $3, content: $4 });
     }
+    | TYPE id openSquareBracket closeSquareBracket FUNCTIONPARAMS BLOCKCONTENT {
+        $$ = new FunctionBlock(getToken(@1), { 
+            id: $2, type: DataType.ARRAY, generic: $1 , params: $5, content: $6 });
+    } 
     | voidType id FUNCTIONPARAMS BLOCKCONTENT {
         $$ = new FunctionBlock(getToken(@1), { 
             id: $2, type: 'void', params: $3, content: $4 });

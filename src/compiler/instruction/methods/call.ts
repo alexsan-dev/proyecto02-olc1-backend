@@ -1,5 +1,5 @@
 import Environment from '../../runtime/environment'
-import { DataType, TokenInfo } from '../../utils'
+import { DataType, DataValue, TokenInfo } from '../../utils'
 import Expression from '../expression/data'
 import Value from '../expression/value'
 import FunctionBlock from './functions'
@@ -8,7 +8,8 @@ import errors from '../../error'
 
 class FunctionCall extends Instruction {
 	// GLOBALES
-	private functionValue: Value | undefined
+	private functionValue: DataValue | undefined
+	private refType: DataType
 
 	// CONSTRUCTOR
 	constructor(
@@ -16,18 +17,25 @@ class FunctionCall extends Instruction {
 		public props: {
 			params: Expression[]
 			id: string
+			generic?: DataType
 		},
 		private builtIn: boolean = false
 	) {
 		super(token, 'FunctionCall')
+		this.refType = DataType.ID
 	}
 
 	// OBTENER VALOR
-	public getValue(): Value | undefined {
+	public getValue(): DataValue | undefined {
 		return this.functionValue
 	}
 
 	// OBTENER TIPO
+	public getType(): DataType | undefined {
+		return this.refType
+	}
+
+	// ES FUNCION NATIVA
 	public isBuiltIn(): boolean {
 		return this.builtIn
 	}
@@ -67,7 +75,14 @@ class FunctionCall extends Instruction {
 										functionBlock.props.params[index].type
 								) {
 									// ASIGNAR VARIABLE A ENTORNO DE FUNCION
-									functionEnv.addVar(functionBlock.props.params[index].id, value.type, value.value)
+									if (value.value.compile(env)) {
+										const copy = new Value(this.token, {
+											value: value.value.getValue(env) ?? '',
+											type: value.value.getType(),
+											generic: value.value.props.generic,
+										})
+										functionEnv.addVar(functionBlock.props.params[index].id, value.type, copy)
+									}
 								} else {
 									errors.push({
 										type: 'Semantic',
@@ -82,7 +97,14 @@ class FunctionCall extends Instruction {
 						})
 
 						compile = functionBlock.compile()
-						this.functionValue = functionBlock.getValue()
+						if (compile) {
+							const functionValue = functionBlock.getValue()
+							if (functionValue) {
+								this.functionValue = functionValue?.getValue(env)
+								this.refType = functionValue?.getType()
+								this.props.generic = functionValue.props.generic
+							}
+						}
 						return compile
 					} else {
 						errors.push({
