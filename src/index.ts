@@ -1,18 +1,34 @@
+import express from 'express'
+import cors from 'cors'
+
 // TOOLS
+import symbols from './compiler/symbols'
 import errors from './compiler/error'
+import logs from './compiler/logs'
 import compile from './compiler'
 import parser from './grammar'
-import fs from 'fs'
 
-// INICIAR PARSER
-try {
-	const input: Buffer = fs.readFileSync('./test/input2.java')
-	const instructions = parser.parse(input.toString())
-	compile(instructions)
+const app = express()
+app.use(cors({ origin: '*' }))
+app.use(express.json())
 
-	if (errors.length) console.log('Errores: ' + JSON.stringify(errors, null, 2))
-} catch (err) {
-	console.error(err)
-}
+app.post('/compile', (req, res) => {
+	const body = req.body as { code: string }
+	if (body?.code?.length) {
+		// INICIAR PARSER
+		try {
+			const instructions = parser.parse(body.code)
+			compile(instructions)
+
+			return res.status(200).json({ success: true, symbols, errors, logs })
+		} catch (err) {
+			return res.status(200).json({ success: false, err })
+		}
+	} else return res.status(200).json({ success: false })
+})
+
+app.listen(5000, () => {
+	console.log('Servidor en http://localhost:5000')
+})
 
 export default {}
