@@ -134,7 +134,7 @@ case 11: case 23: case 79: case 81: case 112: case 118:
         this.$ = [$$[$0]];
     
 break;
-case 15: case 16: case 18: case 19: case 27: case 28: case 29: case 53: case 54: case 91: case 92: case 93: case 94:
+case 15: case 16: case 18: case 19: case 27: case 28: case 29: case 45: case 46: case 47: case 48: case 49: case 50: case 51: case 52: case 53: case 54: case 91: case 92: case 93: case 94:
 
         this.$ = $$[$0];
     
@@ -235,12 +235,7 @@ case 41: case 42:
 break;
 case 43: case 44:
 
-        $$[$0]   
-    
-break;
-case 45: case 46: case 47: case 48: case 49: case 50: case 51: case 52:
-
-        $$[$0]
+        this.$ = $$[$0];   
     
 break;
 case 55:
@@ -732,6 +727,7 @@ parse: function parse(input) {
     const { DataType, getToken, Operator } = require('../compiler/utils')
     const errors = require('../compiler/error')
     const symbols = require('../compiler/symbols')
+    const { addToAst } = require('../compiler/ast')
     const { 
         IncrementalAssignment,
         DynamicListValue,

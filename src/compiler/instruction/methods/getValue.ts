@@ -15,6 +15,7 @@ class GetValue extends FunctionCall {
 	) {
 		super(token, { ...props, id: 'GetValue' }, true)
 		this.listType = DataType.ID
+		this.props.id = 'GetValue'
 	}
 
 	// COMPILAR

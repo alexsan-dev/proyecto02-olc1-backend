@@ -9,6 +9,7 @@ class SetValue extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, public props: { id: string; params: [Expression, Expression] }) {
 		super(token, { ...props, id: 'SetValue' }, true)
+		this.props.id = 'SetValue'
 	}
 
 	// COMPILAR

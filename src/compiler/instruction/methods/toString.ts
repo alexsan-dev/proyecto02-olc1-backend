@@ -10,6 +10,7 @@ class ToString extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
 		super(token, { ...props, id: 'ToString' }, true)
+		this.props.id = 'ToString'
 	}
 
 	// COMPILAR

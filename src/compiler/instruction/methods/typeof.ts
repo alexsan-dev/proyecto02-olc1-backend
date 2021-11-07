@@ -10,6 +10,7 @@ class TypeOf extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
 		super(token, { ...props, id: 'TypeOf' }, true)
+		this.props.id = 'TypeOf'
 	}
 
 	// COMPILAR

@@ -11,6 +11,7 @@ class Truncate extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
 		super(token, { ...props, id: 'Truncate' }, true)
+		this.props.id = 'Truncate'
 	}
 
 	// OBTENER TIPO

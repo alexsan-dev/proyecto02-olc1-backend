@@ -10,6 +10,7 @@ class ToUpper extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
 		super(token, { ...props, id: 'ToUpper' }, true)
+		this.props.id = 'ToUpper'
 	}
 
 	// COMPILAR

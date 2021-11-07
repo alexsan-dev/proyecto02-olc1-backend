@@ -2,6 +2,7 @@
     const { DataType, getToken, Operator } = require('../compiler/utils')
     const errors = require('../compiler/error')
     const symbols = require('../compiler/symbols')
+    const { addToAst } = require('../compiler/ast')
     const { 
         IncrementalAssignment,
         DynamicListValue,
@@ -340,34 +341,34 @@ VARVALUE : decimal {
         $$ = new Value(getToken(@1), { value: $1, type: DataType.BOOLEAN })
     }
     | TOLOWER {
-        $1   
+        $$ = $1;   
     }
     | TOUPPER {
-        $1   
+        $$ = $1;   
     }
     | LENGTHSEQ {
-        $1
+        $$ = $1;
     }
     | TYPEOFSEQ {
-        $1
+        $$ = $1;
     }
     | TOSTRINGSEQ {
-        $1
+        $$ = $1;
     }
     | TOCHARARRAY {
-        $1
+        $$ = $1;
     }
     | TRUNCATE {
-        $1
+        $$ = $1;
     }
     | ROUND {
-        $1
+        $$ = $1;
     }  
     | FUNCTIONCALL {
-        $1
+        $$ = $1;
     }
     | GETVALUE {
-        $1
+        $$ = $1;
     }  
     | VECTORVALUE {
         $$ = $1;

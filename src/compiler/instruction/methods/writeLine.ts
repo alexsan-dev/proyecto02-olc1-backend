@@ -14,6 +14,7 @@ class WriteLine extends FunctionCall {
 		}
 	) {
 		super(token, { ...props, id: 'WriteLine' }, true)
+		this.props.id = 'WriteLine'
 	}
 
 	// COMPILAR

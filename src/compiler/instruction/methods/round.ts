@@ -11,6 +11,7 @@ class Round extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, props: { id: string; params: Expression[] }) {
 		super(token, { ...props, id: 'Round' }, true)
+		this.props.id = 'Round'
 	}
 
 	// COMPILAR

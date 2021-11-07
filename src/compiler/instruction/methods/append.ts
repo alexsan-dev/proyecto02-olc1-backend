@@ -9,6 +9,7 @@ class Append extends FunctionCall {
 	// CONSTRUCTOR
 	constructor(token: TokenInfo, public props: { id: string; params: [Expression] }) {
 		super(token, { ...props, id: 'Append' }, true)
+		this.props.id = 'Append'
 	}
 
 	// COMPILAR

@@ -14,6 +14,7 @@ class ToCharArray extends FunctionCall {
 		public props: { id: string; params: Expression[]; generic?: DataType }
 	) {
 		super(token, { ...props, id: 'ToCharArray' }, true)
+		this.props.id = 'ToCharArray'
 	}
 
 	// COMPILAR

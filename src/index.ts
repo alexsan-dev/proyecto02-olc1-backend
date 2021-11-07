@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 
 // TOOLS
+import startInitGraphviz, { generateDot } from './compiler/ast'
+import Instruction from './compiler/instruction/models'
 import symbols from './compiler/symbols'
 import errors from './compiler/error'
 import logs from './compiler/logs'
@@ -12,6 +14,13 @@ const app = express()
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 
+let instructions: Instruction[] = []
+startInitGraphviz()
+
+app.get('/dot', (_req, res) => {
+	res.status(200).json({ dot: generateDot(instructions) })
+})
+
 app.post('/compile', (req, res) => {
 	const body = req.body as { code: string }
 	if (body?.code?.length) {
@@ -20,7 +29,7 @@ app.post('/compile', (req, res) => {
 			symbols.length = 0
 			errors.length = 0
 			logs.length = 0
-			const instructions = parser.parse(body.code)
+			instructions = parser.parse(body.code)
 			compile(instructions)
 
 			return res.status(200).json({ success: true, symbols, errors, logs })
