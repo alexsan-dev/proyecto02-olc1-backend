@@ -5,9 +5,7 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"start": "nodemon src/index.ts",
-		"build": "tsc",
-		"prebuild": "./build.sh",
-		"prestart": "./build.sh"
+		"build": "tsc"
 	},
 	"repository": {
 		"type": "git",
@@ -31,6 +29,7 @@
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
-		"express": "^4.17.1"
+		"express": "^4.17.1",
+		"typescript": "^4.4.4"
 	}
 }

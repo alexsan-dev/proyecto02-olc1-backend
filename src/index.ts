@@ -17,6 +17,9 @@ app.post('/compile', (req, res) => {
 	if (body?.code?.length) {
 		// INICIAR PARSER
 		try {
+			symbols.length = 0
+			errors.length = 0
+			logs.length = 0
 			const instructions = parser.parse(body.code)
 			compile(instructions)
 

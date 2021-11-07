@@ -90,9 +90,7 @@ class FunctionCall extends Instruction {
 										token: this.token,
 										msg: `Se esperaba un ${
 											functionBlock.props.params[index].type
-										} en el parametro ${index + 1} en la function ${this.props.id} ${
-											value.value.props.generic
-										}`,
+										} en el parametro ${index + 1} en la function.`,
 									})
 									compile = false
 								}
