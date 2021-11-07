@@ -173,11 +173,11 @@ NULLCHAR "\\0"
 %left 'questionMark'
 %left 'minor' 'lessOrEquals' 'major' 'moreOrEquals' 'equalsEquals' 'nonEquals'
 %left 'plus' 'minus'
-%left 'times' 'division' 'module'
+%left 'times' 'division' 'module' 'power'
 %left 'and' 'or'
 %right 'not'
 
-%nonassoc 'comma' 'power' 'openParenthesis' 'closeParenthesis'
+%nonassoc 'comma' 'openParenthesis' 'closeParenthesis'
 
 %start START
 
